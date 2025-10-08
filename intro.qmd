@@ -1,16 +1,5 @@
 # Introduction
 
-```{python}
-#| warning: FALSE
-#| message: FALSE
-#| echo: true
-# Python packages we need for this chapter
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-```
-
-
 In this first introductory chapter, I will lay out the relation between theory development and theory testing as they are the cornerstones of scientific progress. After all, a theory or idea can only be scientific if the theory can be tested and, if need be, refuted. If the theory cannot be tested then it is not science. I will also explain the basic workflow of scientific research and the tools needed with specific emphasis on research in the social sciences. This chapter ends with a reading guide where we discuss each chapter in this syllabus and the relations between the chapters.
 
 ## Theory, Models and Hypotheses
@@ -58,11 +47,11 @@ knitr::include_graphics("./figures/version.jpeg")
 
 ### Make notes
 
-One skill that in our opinion is given not too much attention is making *useful* notes. It has been proven that writing things down is beneficial; not only for remembering but also for understanding. And that seems to be best just by using a pen as this slows writing down and you have to think about what to write down. Underlining or marking is useful less beneficial than writing accompanying notes. But when should you write notes? Well, when attending lectures of course but also when reading. To leverage your notes as much as possible it is important that you have a system where you can *retrieve* your notes and compare them with other notes. The latter is the hardest part, but is in the long run the most rewarding as new connections are created between lectures, courses, books, and years. You do not need any fancy tools for this (there is literally a ton of applications to be found on internet), Microsoft's Onenote or Evernote are more than good enough. Where the workflow typically is to first use pen and paper to *capture* notes and thereafter rewrite and organise your notes in a notes system.
+One skill that in our opinion is given not too much attention is making *useful* notes. It has been proven that writing things down is beneficial; not only for remembering but also for understanding.[See for a theoretical underpinning of this statement @ahrens2022take.]{.aside} And that seems to be best just by using a pen as this slows writing down and you have to think about what to write down. Underlining or marking is useful less beneficial than writing accompanying notes. But when should you write notes? Well, when attending lectures of course but also when reading. To leverage your notes as much as possible it is important that you have a system where you can *retrieve* your notes and compare them with other notes. The latter is the hardest part, but is in the long run the most rewarding as new connections are created between lectures, courses, books, and years. You do not need any fancy tools for this (there is literally a ton of applications to be found on internet), Microsoft's Onenote or Evernote are more than good enough. Where the workflow typically is to first use pen and paper to *capture* notes and thereafter rewrite and organise your notes in a notes system.
 
 ### Use a reference manager!
 
-Perhaps the tool that has the quickest pay-off is a reference manager. For those of you who are not using one yet: **do** it. Why? Because you never have to think about your reference list again. All reference managers come with plugins for Word or other text-editors (or type-setters such as LaTeX that enable you to *automatically* generate reference list based upon in-text citations which the reference manager can also provide. You only need less than an hour to set it up, but you very quickly become more efficient (and thus *save time* in future work). There are many reference managers out there, but we advise Zotero as it is open source. There is both a cloud and desktop version and it comes with a handy tutorial. It also provides a plugin for your browser to automatically import the bibliographic details of the paper you are reading at the moment.
+Perhaps the tool that has the quickest pay-off is a reference manager. For those of you who are not using one yet: **do** it. Why? Because you never have to think about your reference list again.[Note that references that do not exists or in-text citations not listed later in a reference list is considered a form of **fraud**. You always want (or need) a clear correspondence from your in-text citations to your reference list and vice versa.]{.aside} All reference managers come with plugins for Word or other text-editors (or type-setters such as LaTeX that enable you to *automatically* generate reference list based upon in-text citations which the reference manager can also provide. You only need less than an hour to set it up, but you very quickly become more efficient (and thus *save time* in future work). There are many reference managers out there, but we advise Zotero as it is open source. There is both a cloud and desktop version and it comes with a handy tutorial. It also provides a plugin for your browser to automatically import the bibliographic details of the paper you are reading at the moment.
 
 ## Statistical software `Python`
 
@@ -70,9 +59,9 @@ As quantitative research becomes more and more important in the social sciences 
 
 ### Where to get `Python`
 
-First, you need to install `R` itself. You can do this by downloading this from [CRAN](https://cran.r-project.org/mirrors.html) (choose the server you want). Now choose your appropriate operating system, choose the `base` system, download `R` and install it. That's it!
+First, you need to install `Python` itself. We advise to use the Anaconda platform. You can do this by downloading this from [Anaconda](https://www.anaconda.com/). Now choose your appropriate operating system, choose the `base` system, download `Anaconda` and install it. That's it! [Note that this setup is similar to "Statistiek en Data Analyse" as to be as consistent as possible.]{.aside}
 
-The base distribution of `R` comes with a built-in editor, where you can write your script. This editor is however *very* basic. Therefore, it is very much advised that you download and install the free editor [`RStudio`](https://posit.co/download/rstudio-desktop/) as well. Again, choose your operating system and just install the latest version. The very short video (6 minutes) [website](https://www.youtube.com/watch?v=FIrsOBy5k58) gives an overview of the *basic* features (it can do quite some more stuff). 
+In the `Anaconda` environment we will mainly use `Jupyter notebooks`. To view, edit and run `Python` code. Note, although `Jupyter notebooks` are wonderful for educational purposes, that sometimes you want to run `Python` within your own editor. From `Anaconda you` can download for instance the editor `VS code`, which is a very good and all purpose editor.[To be quite honest most editors nowadays are good. Best advise is to choose one and stick to it as you get used to it and gain in efficiency.]{.aside}
 
 ### Why use `Python` and not any other application?
 
@@ -82,8 +71,8 @@ Where 15 years ago most social scientists still used `SPSS` (and the economists 
 
 1. It is open source and thus free; 
 2. `Python` is flexible and thus multi-purpose; 
-3. there is now a **very** large userbase; everything you can dream of (that is, in the context of data science/management), somebody else most likely already programmed;
-[[CRAN packages](https://cran.r-project.org/web/packages/available_packages_by_name.html) give a great overview of all the official packages out there and the wide range of applications, and again they are all free!]{.aside}
+3. there is now a **very** large userbase; everything you can dream of (that is, in the context of data science/management, maps and manipulating text), somebody else most likely already programmed;
+[Hello Large Language Models!]{.aside}
 4. it generates beautiful pictures, diagram, maps, and histograms (even 3D pie diagrams for the masochists amongst us);
 5. relative to `Stata` or `Excel` it is fast, which is great for larger (spatial) databases. 
 

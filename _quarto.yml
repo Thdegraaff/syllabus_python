@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 book:
-  title: "Socio-economic analysis with `Python`"
+  title: "Social-economic analysis with `Python`"
   author: "Thomas de Graaff"
   date: "10/07/2025"
   chapters:
