@@ -1,3 +1,8 @@
+```{python}
+# Packages used in this chapter
+```
+
+
 # Introduction
 
 In this first introductory chapter, I will lay out the relation between theory development and theory testing as they are the cornerstones of scientific progress. After all, a theory or idea can only be scientific if the theory can be tested and, if need be, refuted. If the theory cannot be tested then it is not science. I will also explain the basic workflow of scientific research and the tools needed with specific emphasis on research in the social sciences. This chapter ends with a reading guide where we discuss each chapter in this syllabus and the relations between the chapters.
