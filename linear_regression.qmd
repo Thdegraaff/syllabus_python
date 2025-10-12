@@ -1,5 +1,31 @@
 # Regression Analysis in the Social Sciences {#sec-univariateregression}
 
+```{r}
+#| warning: FALSE
+#| message: FALSE
+#| echo: FALSE
+#| output: FALSE
+library(tidyverse)
+library(kableExtra)
+library(reticulate)
+#py_install("statsmodels")
+```
+
+```{python}
+#| warning: FALSE
+#| message: FALSE
+#| echo: true
+# Python packages we need for this chapter
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy import stats
+import statsmodels.api as sm
+# the next package allows us to formula's for ols
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+```
+
 ## Introduction
 
 Why should we have something as applied econometrics in the social sciences? That is because we have theories and those theories contain variables such as in the direct utility function of model (\ref{eq:directutility}):
@@ -30,95 +56,102 @@ Thus, finding (causal) mechanism helps the scientist or policy maker in assessin
 - If we increase Dutch dikes with one meter, how much less flood risk will there be?
 - How much do classes perform better is we reduce class-size with one student?
 
-### A first encounter with `R`
+### A first encounter with `Python`
 
-For this section, we will focus on the last question. And this is an important question for policy as teachers are costly, but parents value school performance very highly. To start answering this question we *use* data. In `R` data can be in many formats, but usually is in a text file, often with the extension `.csv`.[`.csv` stands for comma seperated value and is just a text file commas denoting the columns.]{.aside} The good thing about this format is that it can always be read with every computer and every operating system. To start using `R` we first need to set the working directory to the appropriate directory.[I suggest that for this---and every other course---you have a specific directory]{.aside} You can do this by using the following command:
+For this section, we will focus on the last question. And this is an important question for policy as teachers are costly, but parents value school performance very highly. To start answering this question we *use* data. Data can be in many formats, but usually it is in a text file, often with the extension `.csv`.[`.csv` stands for comma separated value and is just a text file with commas denoting the columns.]{.aside} The good thing about this format is that it can always be read with every computer and every operating system. 
 
-```{r}
-#| warning: FALSE  
-#| message: FALSE 
-#| echo: TRUE
-#| #| label: workingdirectory
-setwd("/Users/tomba/Library/CloudStorage/OneDrive-VrijeUniversiteitAmsterdam/Thomas/project/preparatory")
-```
+<!-- To start using `python` we first need to set the working directory to the appropriate directory.[I suggest that for this---and every other course---you have a specific directory]{.aside} You can do this by using the following command: --> -->
 
-```{r}
-#| warning: FALSE
-#| message: FALSE
-#| echo: FALSE
-library(kableExtra)
-library(tidyverse)
-```
+<!-- ```{r} -->
+<!-- #| warning: FALSE   -->
+<!-- #| message: FALSE  -->
+<!-- #| echo: TRUE -->
+<!-- #| label: workingdirectory -->
+<!-- #setwd("/Users/tomba/OneDrive-VrijeUniversiteitAmsterdam/Thomas/project/syllabus_python") -->
+<!-- ``` -->
 
-Note here that this file path is used on an Apple or Linux system. On a Windows system you need forward slashes. It is also good to have subdirectories in your project/course folder for e.g. slides, data and tutorials. Already a couple of things can be noticed from this command. We set a working directory with `setwd` and afterwards we put the path in parentheses (that is now known as the argument from the `setwd` command). Moreover, because we are working with text (a so-called string variable), the path has to be in quotation marks. 
+<!-- ```{r} -->
+<!-- #| warning: FALSE -->
+<!-- #| message: FALSE -->
+<!-- #| echo: FALSE -->
+<!-- library(kableExtra) -->
+<!-- library(tidyverse) -->
+<!-- ``` -->
 
-Now suppose you have the subdirectory `data` in your course folder[Often it is as well advisable to make a distinction between *derived* and *raw* data. Raw data is original data and derived data is data you have transformed or worked on. In principle, you do not want to change the original data!]{.aside} and in that data directory you have a file called `CASchools.csv`.[This dataset can be downloaded from Canvas as well with already the data transformed.]{.aside} Now, this dataset describes 420 school districts in California and, amongst other things, their average performance (measured by a test score) and their financial constraints (measured by the amount of students per teacher).
+<!-- Note here that this file path is used on an Apple or Linux system. On a Windows system you need forward slashes. It is also good to have subdirectories in your project/course folder for e.g. slides, data and tutorials. Already a couple of things can be noticed from this command. We set a working directory with `setwd` and afterwards we put the path in parentheses (that is now known as the argument from the `setwd` command). Moreover, because we are working with text (a so-called string variable), the path has to be in quotation marks.  -->
 
-To import the data in `R` you make use of the `read.csv` command, as follows:
+Now suppose you have the subdirectory `data` in your course folder[Often it is as well advisable to make a distinction between *derived* and *raw* data. Raw data is original data and derived data is data you have transformed or worked on. In principle, you do not want to change the original data!]{.aside} and in that data directory you have a file called `CASchools.csv`.[This dataset can be downloaded from Canvas as well, with already the data transformed.]{.aside} Now, this dataset describes 420 school districts in California and, amongst other things, their average performance (measured by a test score) and their financial constraints (measured by the amount of students per teacher).
 
-```{r}
+To import the data in `Python` you make use of the `read_csv()` function from `pandas`, as follows:
+
+```{python}
 #| label: readdata
 #| collectcode: TRUE
 #| results: hide
-# Read in CASchools dataset
-CASchools <- read.csv("./data/CASchools.csv")
+# read the data 
+# Note that the pathname is a string and should be in parentheses
+data = pd.read_csv('/Users/tomba/projects/syllabus_python/data/CASchools.csv')
 ```
+Note that we can comment on our code by the use of the `#`-sign. Everything after will not be used for computation.[When working with `Jupyter` notebooks, you do not have to specify the path as long as the data is in the same directory as the notebook.]{.aside} And I advise you to regularly comment on your code as that makes it easier for somebody and future you to understand the code. Moreover, the `=` symbol indicated that the output of the command on the right hand side is poured into a new object (somethings we conveniently in this case call `data` ) on the left hand side of this symbol. This object is now a so-called dataframe which you can open use further.
+<!-- For our purpose a much quicker way to load the `CASchools.csv` dataset is to use the `AER` package that contains many datasets that are often used for educational purposes.[But note that some data in this particular `CASchools` file still has to be transformed which I will do below.]{.aside} -->
 
-Note that we can comment on our code by the use of the `#`-sign. Everything after will not be used for computation. And I advise you to regularly comment on your code as that makes it easier for somebody and future you to understand the code. Moreover, the `<-` symbol indicated that the output of the command on the right hand side is poured into a new object (somethings we conveniently in this case call `CASchools` as well) on the left hand side of this symbol. This object is now a so-called dataframe which you can open in, e.g., RStudio. To some extent it resembles the `Excel` set-up with observations in rows and variables in the columns. 
+<!-- ```{r} -->
+<!-- #| label: readdata_AER -->
+<!-- #| collectcode: TRUE -->
+<!-- #| message: FALSE -->
+<!-- #| results: hide -->
+<!-- # First, invoke the library AER -->
+<!-- # (at the beginning of each session you have to do this) -->
+<!-- # (you also have to install packages which you can do using the package pane in the right-bottom panel) -->
+<!-- library(AER) -->
+<!-- data(CASchools) -->
+<!-- ``` -->
 
-For our purpose a much quicker way to load the `CASchools.csv` dataset is to use the `AER` package that contains many datasets that are often used for educational purposes.[But note that some data in this particular `CASchools` file still has to be transformed which I will do below.]{.aside}
+Now, we would like to know how the data set looks like, for example what kind of variables it contains. We do this by invoking the command `head` which give the first six lines of the data set:
 
-```{r}
-#| label: readdata_AER
-#| collectcode: TRUE
-#| message: FALSE
-#| results: hide
-# First, invoke the library AER
-# (at the beginning of each session you have to do this)
-# (you also have to install packages which you can do using the package pane in the right-bottom panel)
-library(AER)
-data(CASchools)
-```
-
-In addition, we would like to know how the data set looks like, for example what kind of variables it contains. We do this by invoking the command `head` which give the first six lines of the data set:
-
-```{r}
+```{python}
 #| label: describedata
-head(CASchools)
+data.head()
 ```
 
 This provides information about the variables and the names and types of variables. In this case variables are either a float (a real number) or a string (text). Note as well, that this kind of output is cumbersome and ugly and not fit directly for reporting. Later, we will try to make this look better in an automatic way.
 
-The command `summary` gives descriptive statistics. Suppose that in this case we are only interested in the variable `math` (average scores for mathematics by district). Then we invoke this by:
+The pandas function `.descibe()` gives descriptive statistics.
 
-```{r}
+```{python}
 #| label: summarizecadata
-summary(CASchools$math)
+data.describe()
+```
+ Suppose that in this case we are only interested in the variable `math` (average scores for mathematics by district). Then we invoke this by:
+
+```{python}
+#| label: summarizecadata2
+data[['math']].describe()
 ```
 
-Note that we invoke the command `summary` and in its argument is one variable `math` of the dataframe `CASchools`. We get access to this variable by the use of the `$`-sign. 
+Note that we invoke the function `describe` on one variable `math` of the dataframe `data`. 
 
-Now we see descriptive statistics for the variable `math`, containing the mean, the standard deviation, the minimum and maximum, and the first and third quartile of this variable. For this exercise and also for the remainder of this syllabus we are actually interested in two variables that are not in the data set, but that we have to compute ourselves; namely, the average test scores of reading and mathematics and the size of the classes (or the student-teacher ratio). We do so as follows:
+Now we see descriptive statistics for the variable `math`, containing the mean, the standard deviation, the minimum and maximum, and the first, second and third quartile of this variable. For this exercise and also for the remainder of this syllabus we are actually interested in two variables that are not in the data set, but that we have to compute ourselves; namely, the average test scores of reading and mathematics and the size of the classes (or the student-teacher ratio). We do so as follows:
 
-```{r}
+```{python}
 #| label: calculatenewvariables
 
-# compute new variable STR and append it to CASchools dataframe
-CASchools$str <- CASchools$students / CASchools$teachers 
+# compute new variable STR and append it to data dataframe
+data['STR'] = data['students'] / data['teachers'] 
 
-# compute new variable TestScore and append it to CASchools dataframe
-CASchools$testscr <- (CASchools$read + CASchools$math) / 2  
+# compute new variable TestScore and append it to data dataframe
+data['testscr'] = (data['read'] + data['math']) / 2 
 ```
 
-Here, the `<-` symbol again means you are creating something new on the left hand side of the symbol (in this case a variable in the dataframe `CASchools`, but in general you always make a new *object*).[`R` is a so-called object-oriented language and (almost) everything is an object including dataframes and variables.]{.aside}
+Here, the `=` symbol again means you are creating something new on the left hand side of the symbol (in this case a variable in the dataframe `data`, but in general you always make a new *object*).[`python` is a so-called object-oriented language and (almost) everything is an object including dataframes and variables.]{.aside}
 
-For a first insight in the relation between class size and class performance we might want to draw a so-called scatter plot. These types of plots relate the values of two variables in a two-dimensional way by giving the values as coordinates. The following syntax will do so.[Note that the first ]
+For a first insight in the relation between class size and class performance we might want to draw a so-called scatter plot. These types of plots relate the values of two variables in a two-dimensional way by giving the values as coordinates. The following syntax will do so. [Here we use the `seaborn` library as it is easier to draw scatterplots and trendlines. Note that the first input of the function specifies the data, the second what should be on the x-axis and the third what should be on the y-axis. ]{.aside}
 
-```{r}
-#| echo: TRUE 
+```{python}
+#| echo: TRUE
 #| label: fig-scattercaschool
-#| fig-cap: "The relation between average number of pupils in a class room and average test scores in a scatter-plot" 
-plot(CASchools$str , CASchools$testscr)
+#| fig-cap: "The relation between average number of pupils in a class room and average test scores in a scatter-plot"
+sns.scatterplot(data = data, x = "STR" , y = "testscr")
 ```
 
 This "cloud" of dots does not yield a clearly visible relation between class performance and class size. However, this can be deceptive. Often it is difficult to discern clear relations from raw data only. Therefore we need to resort to numerical evidence.
@@ -136,23 +169,16 @@ To assess whether there is a relation between class performance and class size a
 3. Confidence intervals
     - This strategy estimates an interval for the **difference** in the mean test scores, so small versus large student-teacher ratio districts.
 
-In `R` we can make a start with this data analysis by executing the following two commands:
+In `Python` we can make a start with this data analysis by executing the following two commands:
 
-```{r}
+```{python}
 #| label: analysisdata
-library(dplyr)
 
-CASchools$large <- CASchools$str >= 20
-CASchools %>%
-    group_by(large) %>%
-    summarise(
-        mean_testscr = mean(testscr), 
-        sd_testscr = sd(testscr), 
-        obs = n()
-    )
+data['large'] = data['STR'] >= 20
+data.groupby('large')['testscr'].agg(['mean', 'std', 'count'])
 ```
 
-We now invoke a second library (a very handy one, called `dplyr`[That is, handy in R. This is where programs as `STATA` would be easier out of the box for these simple tasks. However, `dplyr` is incredibly powerful and its functionality can be easily extended to all sorts of data managements tasks, making it incredibly powerful.]{.aside} to create a new dataframe consisting of statistics of our `CASchools` dataframe. The first command *generates* a new variable called `large` and denotes an indicator being 0 (of FALSE) if STR $< 20$ and 1 (or TRUE) if STR $\geq 20$. The second command summarizes the testscore variable again, but now only gives the mean, standard deviation and the number of observations and does this by each value of the new variable `large` (the `group_by` command). Of course, this output is rather ugly and it is better to make a nice table such as @tbl-smalllarge).
+The first command *generates* a new variable called `large` and denotes an indicator being 0 (or False) if STR $< 20$ and 1 (or True) if STR $\geq 20$. The second command summarizes the testscore variable again, but now only gives the mean, standard deviation and the number of observations and does this by each value of the new variable `large` (the `groupby` function). Of course, this output is rather ugly and it is better to make a nice table such as @tbl-smalllarge).
 
 ```{r, echo = FALSE}
 #| label: tbl-smalllarge
@@ -189,19 +215,19 @@ In his case the concept of estimation (that is to determine the difference betwe
 \label{eq:estimationlarge}
 \end{align}
 
-This basically means subtracting the average scores of @tbl-smalllarge (later we see how to do this automatically in `R`). Now, the difference---$\Delta$---equals 7.2. We then have to ask ourselves whether this is a large difference in a real-world sense. Note that, from @fig-scattercaschool, test scores seem to range from 600 to 800 and do not really have a direct meaning for us. A useful trick then is to look at the standard deviation (note that if things are normally distributed, 95\% of all probability mass is within the range mean plus or minus two times the standard deviation). In this case, the difference is about $1/3$ of the standard deviation. A different way of looking at this is looking at the percentiles of test scores. In `R` this looks like:
+This basically means subtracting the average scores of @tbl-smalllarge (later we see how to do this automatically in `R`). Now, the difference---$\Delta$---equals 7.2. We then have to ask ourselves whether this is a large difference in a real-world sense. Note that, from @fig-scattercaschool, test scores seem to range from 600 to 800 and do not really have a direct meaning for us. A useful trick then is to look at the standard deviation (note that if things are normally distributed, 95\% of all probability mass is within the range mean plus or minus two times the standard deviation). In this case, the difference is about $1/3$ of the standard deviation. A different way of looking at this is looking at the percentiles of test scores. In `python` we can do with the `percentile` function from numpy:
 
-```{r}
+```{python}
 #| label: percentiles
-quantiles <- c(0.10, 0.25, 0.5, 0.75, 0.9)
-quantile(CASchools$testscr, quantiles)
+percentiles = [10, 25, 50, 75, 90]
+np.percentile(data['testscr'], percentiles) 
 ```
 
-where the command `quantile` asks for a tabulation of certain statistics and gives the $x$-th percentile of that statistic. Now note that between the 50th and 75th percentile there is only 12 points. So given this information, the difference of $7.4$ is rather sizable. But whether this difference is big enough to be important for school reform discussions, for parents, or for a school committee is a question we cannot answer with this analysis.
+where the function `percentile` asks for a tabulation of certain statistics and gives the $x$-th percentile of that statistic. Now note that between the 50th and 75th percentile there is only 12 points. So given this information, the difference of $7.4$ is rather sizable. But whether this difference is big enough to be important for school reform discussions, for parents, or for a school committee is a question we cannot answer with this analysis.
 
 #### Hypothesis testing
 
-An alternative is to test the null-hypothesis that the difference $\Delta = 0$. For that we need a so-called difference-in-means test and compute the corresponding $t$-statistic,^[This is something that should be extensively dealt with in introductory statistics courses.]
+An alternative is to test the null-hypothesis that the difference $\Delta = 0$. For that we need a so-called difference-in-means test and compute the corresponding $t$-statistic,^[This is something that is extensively dealt with in the *statistiek en data analyse* course.]
 \begin{equation}
 t = \frac{\bar{Y}_s - \bar{Y}_l}{\sqrt{\frac{s^2_s}{n_s} +\frac{s^2_l}{n_l} }} = \frac{\bar{Y}_s - \bar{Y}_l}{SE(\bar{Y}_s - \bar{Y}_l)}
 \label{eq:testinglarge}
@@ -229,14 +255,21 @@ So, what does this mean again. Well, two things. First, the 95\% confidence inte
 
 So, why give this rather simple procedure so much attention. That is because all "classical" statistics are centered around these three elements and statistical computer output will always give, at least, these three. And they are as well very much related with each other. Once you know two of them, you know the third one as well.
 
-Now, although the procedure is rather straightforward, it is also a bit cumbersome and prone to errors. Therefore, it is much easier to let `R` do it:
+Now, although the procedure is rather straightforward, it is also a bit cumbersome and prone to errors. Therefore, it is much easier to let `python` do it:
 
-```{r}
+```{python}
 #| label: ttest
-t.test(testscr ~ large, data = CASchools)
+
+small_classes = data[data['large'] == 0]['testscr']
+large_classes = data[data['large'] == 1]['testscr']
+
+t_stat, p_val = stats.ttest_ind(small_classes, large_classes, equal_var=False)  # Welch's t-test (default in R)
+
+# note that in code below :.3f states 3 digits
+print(f"t-statistic: {t_stat:.3f}, P-value: {p_val:.3f}")
 ```
 
-So, in this case we want to assess the difference in test score by groups (being small and large classes). Note, however that the difference in means, $t$-statistic and thus the confidence intervals are similar as in, e.g., equation \ref{eq:cilarge}. 
+So, in this case we want to assess the difference in test score by groups (being small and large classes). Note, however that the difference in means, $t$-statistic and thus the confidence intervals are similar as in, e.g., equation \ref{eq:cilarge}.
 
 Now try to find out for yourself that this output gives you the estimation of $\Delta$ of equation \ref{eq:estimationlarge}, the $t$-value and corresponding test outcome of equation \ref{eq:testinglarge} where the corresponding confidence intervals of equation \ref{eq:cilarge} can be readily calculated.
 
@@ -337,18 +370,29 @@ From here we can predict the values $\hat{Y}_i$ and residuals $\hat{u}_i$ as the
 
 When we apply this to our data cloud in @fig-scattercaschool then we get the following optimal population regression line:
 
-```{r fig.align='center', echo=FALSE, fig.cap = "Scatterplot and estimated regression line", label='fig-cloud', out.width="600px"}
-knitr::include_graphics("./figures/Lecture1_sheet13.jpg")
+```{python}
+#| echo: TRUE
+#| label: fig-cloud
+#| fig-cap: "Scatterplot and estimated regression line"
+sns.regplot(data = data, x = "STR" , y = "testscr", ci = None)
+plt.text(x=20, y=700, s="$\widehat{TestScore} = 698.9 - 2.28 \\times STR$", fontsize=11, color='black')
+plt.xlabel("Student-teacher ratio")
+plt.ylabel("Testscore")
+plt.show()
 ```
+
+
 where the estimated slope equals $\hat{\beta}_1 = -2.28$, the estimated intercept equals $\hat{\beta}_0 = 698.9$ and the total population regression line can be written as: $\widehat{TestScore} = 698.9 - 2.28 \times STR$. So, how to interpret the estimated slope and intercept now? First, the slope entails that districts with one more student per teacher on average have test scores that are 2.28 points lower (that is, $\frac{\Delta TestScore}{\Delta STR} =-2.28$). Secondly, the intercept (taken literally) means that, according to this estimated line, districts with zero students per teacher would have a (predicted) test score of 698.9. Now, this does not make any sense---it actually extrapolates the line outside the range of the data. In this case we can say that the intercept is not economically meaningful.
 
 Now, how to fill in predictions? One of the districts in the data set is Antelope (CA) for which $STR = 19.33$ and $TestScore = 657.8$ Then the predicted value for the testscore is $\hat{Y}_{Antelope}= 698.9 - 2.28 \times 19.33 = 654.8$ and the resulting residual is $\hat{u}_{Antelope} = 657.8 - 654.8 = 3.0$
 
-In `R` both the constant and the slope can be easily retrieved by:[The command `lm` stands for linear model. Note as well how the formula is specified. First, the dependent variable, then a `~` sign and then the independent variable. Finally, we have to specify which dataframe to use; namely, `R` can have several dataframes in its memory.]{.aside}
+In `python` both the constant and the slope can be easily retrieved by:[ Note as well how the formula is specified. First, the dependent variable, then a `~` sign and then the independent variable. Finally, we have to specify which dataframe to use; namely, `python` can have several dataframes in its memory.]{.aside}
 
-```{r}
-model_1 <- lm(testscr ~ str, data = CASchools)
-summary(model_1)
+```{python}
+model_1 = smf.ols('testscr ~ STR', data=data).fit()
+
+# Display the summary
+print(model_1.summary())
 ```
 
 We will discuss the rest of this output later.
@@ -429,13 +473,17 @@ The exact definition of confidence intervals is a bit tricky. Namely, a 95\% con
 \hat{\beta}_1 \pm 1.96 \times \sigma_{\hat{\beta}_1} = -2.28 \pm 1.96 \times 0.52 = [-3.30, -1.26].
 \label{eq:olsci}
 \end{equation}
-So, every value between $-3.30$ and $-1.26$ will **not** be rejected as null-hypothesis, while every value outside that interval will be rejected. Note that confidence intervals are again automatically given by computer output. If one would like a confidence interval against another critical level, say against a 99% critical level, one can use the `confint.lm()` command.
+So, every value between $-3.30$ and $-1.26$ will **not** be rejected as null-hypothesis, while every value outside that interval will be rejected. Note that confidence intervals are again automatically given by computer output. If one would like a confidence interval against another critical level, say against a 99% critical level, one can use the `conf_int()` function and specify as:
 
-```{r}
-model_1 <- lm(testscr ~ str, data = CASchools)
-confint.lm(model_1, level = 0.99)
+```{python}
+# Fit the model
+model_1 = smf.ols('testscr ~ STR', data=data).fit()
+
+# Get 99% confidence intervals
+conf_int_99 = model_1.conf_int(alpha=0.01)  # 1 - 0.99 = 0.01
+
+print(conf_int_99)
 ```
-
 
 #### Regression with a dummy {#sec-dummy}
 
@@ -461,9 +509,9 @@ Which is just the population difference in group means.
 
 If we go back to our example with $X_i = 1$ if $STR \geq 20$ and 0 otherwise then we get the following regression output
 
-```{r}
-model_2 <- lm(testscr ~ factor(large), data = CASchools)
-summary(model_2)
+```{python}
+model_2 = smf.ols('testscr ~ large', data=data).fit()
+print(model_2.summary())
 ```
 
 Now, note that this is the same output ($\Delta= -7.2$, $\sigma_\Delta = 1.85$ and $t$-statistic is $-3.88$)[They are not exactly the same though and that is that `R` for the $t$-test in @sec-smart corrects for the degrees of freedom, or the number of variables it uses. In large sample they coincide though.]{.aside} as when we did the difference in means test in @sec-smart (using the `R` way). To conclude, this is just another way (and much easier) to do a difference-in-means analysis. And this directly carries over for the situation when we have additional regressors.
@@ -522,7 +570,7 @@ The third and final least square assumption for causal inference is that large o
 knitr::include_graphics("./figures/Lecture1_sheet29.jpg")
 ```
 
-However, this does not automatically entail that the isolated observation should be deleted. What it does entail is that one should go back to her data and investigate whether the outlier could be a mistake---perhaps a typo made when preparing the data or something that went amiss when converting the data from an `Excel` format to a `R` format.
+However, this does not automatically entail that the isolated observation should be deleted. What it does entail is that one should go back to her data and investigate whether the outlier could be a mistake---perhaps a typo made when preparing the data or something that went amiss when converting the data from an `Excel` format to a `Python` format.
 
 ## Other least squares assumptions
 
@@ -572,12 +620,15 @@ But what if the errors are in fact homoskedastic? Then in fact you can prove tha
 \end{equation}
 which is much simpler than Eq. \ref{eq:olsse}. Again note that $var(\hat{\beta}_1)$ is inversely proportional to $var(X)$: more spread in $X$ means more information about $\hat{\beta}_1$---we discussed this earlier but it is clearer from this formula.
 
-But what does this mean for estimation. Note that `R` does not automatically apply Eq. \ref{eq:olsse} for its standard errors, but uses the simpler version Eq. \ref{eq:olssesimple} instead. But if we invoke the `vcovHC` command, `R` computes heteroskedasticity-robust standard errors. So if you do not, `R` computes homoskedasticity-only standard errors. So:
+But what does this mean for estimation. Note that `Python` does not automatically apply Eq. \ref{eq:olsse} for its standard errors, but uses the simpler version Eq. \ref{eq:olssesimple} instead. But if we invoke the `cov_type = "HC0` command, `python` computes heteroskedasticity-robust standard errors. So if you do not, `python` computes homoskedasticity-only standard errors. So:
 
-```{r}
-vcovHC(model_2)
+
+```{python}
+model_2 = smf.ols('testscr ~ large', data=data).fit(cov_type = "HC0")
+print(model_2.summary())
 ```
-where the variances are now on the diagonal and thus the standard error of `large` is $\sqrt{3.35}$.
+
+where the standard error of `large` is now $1.821}$.
 
 The bottom line is that the errors are either homoskedastic or heteroskedastic and if you use heteroskedastic-robust standard errors, you are fine. Namely:
 
@@ -627,11 +678,18 @@ where $RMSE$ only differs from the $SER$ in the *degrees of freedom*.
 
 If we again look at our regression output:
 
-```{r}
-summary(model_1)
+```{python}
+model_1 = smf.ols('testscr ~ STR', data=data).fit(cov_type = "HC0")
+print(model_1.summary())
 ```
 
-then we see that the $R^2 = .05$. So, only 5% of all variation in test scores is explained. This of course makes sense as potential many important variables are not included in the model. However, this does not automatically mean that the impact is biased and especially that the $STR$ is unimportant in a policy sense. Again, we focus on causal inference, not on making a good model for prediction. The $SER= 18.6$ (given here as `Residual standard error`) indicates that the average error made is 18.6 test score units, which can be seen as sizable. In @sec-modeling we include other, and important, variables and what we then of course will see is that the R$^2$ increases and the $SER$ decreases.
+then we see that the $R^2 = .05$. So, only 5% of all variation in test scores is explained. This of course makes sense as potential many important variables are not included in the model. However, this does not automatically mean that the impact is biased and especially that the $STR$ is unimportant in a policy sense. Again, we focus on causal inference, not on making a good model for prediction. 
+
+```{python}
+np.sqrt(model_1.scale)
+```
+
+The $SER= 18.6$ (which is unfortunately not directly provided by `python` but is actually the square root of the `scale` attribute of the regression model object) indicates that the average error made is 18.6 test score units, which can be seen as sizable. In @sec-modeling we include other, and important, variables and what we then of course will see is that the R$^2$ increases and the $SER$ decreases.
 
 ## Conclusion
 
