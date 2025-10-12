@@ -9,7 +9,7 @@ book:
   chapters:
     - index.qmd
     - intro.qmd
-    #- linear_regression.qmd
+    - linear_regression.qmd
     #- multivariate.qmd
     #- assessment.qmd
     #- conclusion.qmd
