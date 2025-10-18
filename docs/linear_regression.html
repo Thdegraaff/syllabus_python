@@ -84,7 +84,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
+<link href="./multivariate.html" rel="next">
 <link href="./intro.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -212,6 +212,24 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./linear_regression.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Regression Analysis in the Social Sciences</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multivariate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Modeling in the Social Sciences</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./assessment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Specification and Assessment Issues</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">In conclusion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -734,8 +752,8 @@ Figure&nbsp;2.5: Scatterplot and estimated regression line
 Dep. Variable:                testscr   R-squared:                       0.051
 Model:                            OLS   Adj. R-squared:                  0.049
 Method:                 Least Squares   F-statistic:                     22.58
-Date:                Sun, 12 Oct 2025   Prob (F-statistic):           2.78e-06
-Time:                        16:13:52   Log-Likelihood:                -1822.2
+Date:                Fri, 17 Oct 2025   Prob (F-statistic):           2.78e-06
+Time:                        16:49:53   Log-Likelihood:                -1822.2
 No. Observations:                 420   AIC:                             3648.
 Df Residuals:                     418   BIC:                             3657.
 Df Model:                           1                                         
@@ -876,8 +894,8 @@ Y_i = \beta_0 + \beta_1 X_i + u_i
 Dep. Variable:                testscr   R-squared:                       0.035
 Model:                            OLS   Adj. R-squared:                  0.032
 Method:                 Least Squares   F-statistic:                     15.07
-Date:                Sun, 12 Oct 2025   Prob (F-statistic):           0.000120
-Time:                        16:13:52   Log-Likelihood:                -1825.9
+Date:                Fri, 17 Oct 2025   Prob (F-statistic):           0.000120
+Time:                        16:49:53   Log-Likelihood:                -1825.9
 No. Observations:                 420   AIC:                             3656.
 Df Residuals:                     418   BIC:                             3664.
 Df Model:                           1                                         
@@ -951,7 +969,7 @@ Figure&nbsp;2.8: Condition mean independence assumption
 <li>Because <span class="math inline">\(X\)</span> is assigned randomly, all other individual characteristics—the things that make up <span class="math inline">\(u\)</span>—are <em>independently</em> distributed of <span class="math inline">\(X\)</span> by definition.</li>
 <li>Thus it automatically follows that: <span class="math inline">\(E(u \mid X = x) = 0\)</span></li>
 </ol>
-<p>Now, both in actual experiments, or with <strong>observational</strong> data, we will need to think hard about whether <span class="math inline">\(E(u|X = x) = 0\)</span> holds. <span class="quarto-unresolved-ref">?sec-modeling</span> and <span class="quarto-unresolved-ref">?sec-specification</span> provide various examples where this assumption is violated. However, if this assumption is violated it means that you have a <strong>biased</strong> inference, which boils down to the fact that your estimated <span class="math inline">\(\hat{\beta_1}\)</span> is not the one that you want and that correct inference based upon this estimate cannot be done.</p>
+<p>Now, both in actual experiments, or with <strong>observational</strong> data, we will need to think hard about whether <span class="math inline">\(E(u|X = x) = 0\)</span> holds. <a href="multivariate.html" class="quarto-xref"><span>Chapter 3</span></a> and <a href="assessment.html" class="quarto-xref"><span>Chapter 4</span></a> provide various examples where this assumption is violated. However, if this assumption is violated it means that you have a <strong>biased</strong> inference, which boils down to the fact that your estimated <span class="math inline">\(\hat{\beta_1}\)</span> is not the one that you want and that correct inference based upon this estimate cannot be done.</p>
 </section>
 <section id="least-squares-assumption-2-independenty-and-identically-distributed" class="level3" data-number="2.4.2">
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="least-squares-assumption-2-independenty-and-identically-distributed"><span class="header-section-number">2.4.2</span> Least squares assumption 2: independenty and identically distributed</h3>
@@ -1065,8 +1083,8 @@ Figure&nbsp;2.13: Heteroskedasticity in Californation schools?
 Dep. Variable:                testscr   R-squared:                       0.035
 Model:                            OLS   Adj. R-squared:                  0.032
 Method:                 Least Squares   F-statistic:                     15.50
-Date:                Sun, 12 Oct 2025   Prob (F-statistic):           9.69e-05
-Time:                        16:13:52   Log-Likelihood:                -1825.9
+Date:                Fri, 17 Oct 2025   Prob (F-statistic):           9.69e-05
+Time:                        16:49:53   Log-Likelihood:                -1825.9
 No. Observations:                 420   AIC:                             3656.
 Df Residuals:                     418   BIC:                             3664.
 Df Model:                           1                                         
@@ -1137,8 +1155,8 @@ RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^n \hat{u}_i^2},
 Dep. Variable:                testscr   R-squared:                       0.051
 Model:                            OLS   Adj. R-squared:                  0.049
 Method:                 Least Squares   F-statistic:                     19.35
-Date:                Sun, 12 Oct 2025   Prob (F-statistic):           1.38e-05
-Time:                        16:13:52   Log-Likelihood:                -1822.2
+Date:                Fri, 17 Oct 2025   Prob (F-statistic):           1.38e-05
+Time:                        16:49:53   Log-Likelihood:                -1822.2
 No. Observations:                 420   AIC:                             3648.
 Df Residuals:                     418   BIC:                             3657.
 Df Model:                           1                                         
@@ -1166,7 +1184,7 @@ Notes:
 <pre><code>np.float64(18.580966694033535)</code></pre>
 </div>
 </div>
-<p>The <span class="math inline">\(SER= 18.6\)</span> (which is unfortunately not directly provided by <code>python</code> but is actually the square root of the <code>scale</code> attribute of the regression model object) indicates that the average error made is 18.6 test score units, which can be seen as sizable. In <span class="quarto-unresolved-ref">?sec-modeling</span> we include other, and important, variables and what we then of course will see is that the R<span class="math inline">\(^2\)</span> increases and the <span class="math inline">\(SER\)</span> decreases.</p>
+<p>The <span class="math inline">\(SER= 18.6\)</span> (which is unfortunately not directly provided by <code>python</code> but is actually the square root of the <code>scale</code> attribute of the regression model object) indicates that the average error made is 18.6 test score units, which can be seen as sizable. In <a href="multivariate.html" class="quarto-xref"><span>Chapter 3</span></a> we include other, and important, variables and what we then of course will see is that the R<span class="math inline">\(^2\)</span> increases and the <span class="math inline">\(SER\)</span> decreases.</p>
 </section>
 </section>
 <section id="conclusion" class="level2" data-number="2.7">
@@ -1615,8 +1633,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./multivariate.html" class="pagination-link" aria-label="Modeling in the Social Sciences">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Modeling in the Social Sciences</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

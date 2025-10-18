@@ -673,7 +673,7 @@ However, more often the *root mean squared error* ($RMSE$) is used, which is ver
 \begin{equation}
 RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^n \hat{u}_i^2},
 \label{eq:rmse}
-\end{equation}
+\end{equation} 
 where $RMSE$ only differs from the $SER$ in the *degrees of freedom*.
 
 If we again look at our regression output:

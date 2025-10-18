@@ -10,9 +10,9 @@ book:
     - index.qmd
     - intro.qmd
     - linear_regression.qmd
-    #- multivariate.qmd
-    #- assessment.qmd
-    #- conclusion.qmd
+    - multivariate.qmd
+    - assessment.qmd
+    - conclusion.qmd
     - references.qmd
   appendices:
      - appendix.qmd

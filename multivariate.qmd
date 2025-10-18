@@ -1,19 +1,44 @@
 # Modeling in the Social Sciences {#sec-modeling}
 
 ```{r}
+#| warning: FALSE
+#| message: FALSE
+#| echo: FALSE
+#| output: FALSE
+library(tidyverse)
+library(kableExtra)
+library(reticulate)
+#py_install("statsmodels")
+```
+
+```{python}
+#| warning: FALSE
+#| message: FALSE
+#| echo: true
+# Python packages we need for this chapter
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy import stats
+import statsmodels.api as sm
+# the next package allows us to formula's for ols
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+```
+
+```{python}
 #| label: stata_setup
 #| warning: FALSE
 #| message: FALSE
 #| echo: FALSE
-library(tidyverse)
-library(kableExtra)
-library(AER)
-data(CASchools)
-# compute new variable STR and append it to CASchools dataframe
-CASchools$str <- CASchools$students / CASchools$teachers 
 
-# compute new variable TestScore and append it to CASchools dataframe
-CASchools$testscr <- (CASchools$read + CASchools$math) / 2  
+data = pd.read_csv('/Users/tomba/projects/syllabus_python/data/CASchools.csv')
+
+# compute new variable STR and append it to data dataframe
+data['STR'] = data['students'] / data['teachers'] 
+
+# compute new variable TestScore and append it to data dataframe
+data['testscr'] = (data['read'] + data['math']) / 2 
 ```
 
 In @sec-univariateregression we discussed the origins of, working of, and assumptions behind univariate regression. That is, a regression model with only one independent variable $X$ on the right hand side.^[With right hand side we mean on the right side of the equal sign $=$. It is often abbreviated with RHS.] However, and especially in the social sciences, you almost always see regressions with many independent variables. Depending on the field, these variables can be called control variables, confounding factors, mediator or moderator variables.^[There is something more to the use of these names of variables and their exact working but we leave that for another course.] But why are these variables included? Is it only to improve model performance or are there other reasons? @sec-morevar deals with this question whereafter @sec-multivariate shows how you can include additional variables in a *multivariate regression model* and especially how you should interpret them. @sec-nonlinear extends the multivariate regression model and shows how you can actually use this model to estimate a broad range of linear and non-linear economic models. @sec-fixedeffects discusses the use of multiple dummy variables (see again @sec-dummy) in a way that economists refer to as *fixed effects*. The last section concludes and provides a further discussion of the benefits and limitations of multivariate regression models. 
@@ -114,9 +139,11 @@ But if we now include include percent English Learners in the district ($PctEL$)
 
 Clearly, the effect of student teacher ratio becomes smaller (that is, less negative). That indicates that the original regression suffers from omitted variable bias. And this is what should happen as reasoned above. The `R` syntax for a multivariate regression model is now rather straightforward. You basically add another to the regression equation, as below:
 
-```{r}
-model_3 <- lm(testscr ~ str + english, data = CASchools)
-summary(model_3)
+```{python}
+model_3 = smf.ols('testscr ~ STR + english', data = data).fit(cov_type = "HC0")
+print(model_3.summary())
+
+print("The SER of model 3 is: {}".format(np.sqrt(model_3.scale)))
 ```
 
 Obviously, the effect of student teacher ration reduces with 50%! The interpretation of the rest of the statistical output, such as measures of fit and test statistics, follows in the subsections below.
@@ -130,7 +157,7 @@ In multivariate regression models, there are four commonly used measures of fit,
 SER = s_{\hat{u}} = \sqrt{\frac{1}{n-k-1} \sum_{i=1}^n \hat{u}^2_i},
 \end{equation}
 where $k$ is the number of variables (including the constant) use in the regression model. Note that in the univariate regression model $k=2$---the slope coefficient and the constant.
-2. The root mean square error (RMSE) which denotes as well the sdandard deviation of $\hat{u}_i$ but now without degrees of freedom. We have seen this before in Eq. \ref{eq:rmse} and does not change.
+2. The root mean square error (RMSE) which denotes as well the standard deviation of $\hat{u}_i$ but now without degrees of freedom. We have seen this before in Eq. \ref{eq:rmse} and does not change.
 3. The R$^2$ which measures the fraction of variance of $Y$ explained by the independent variables. Again, we have seen this one before
 4. The adjusted "adjusted R$^2$" (or $\bar{\text{R}}^2$) which is equal to the R$^2$ with a degrees-of-freedom correction that adjusts for estimation uncertainty. It can be formulated as:
 \begin{equation}
@@ -172,15 +199,15 @@ Multicollinearity comes in two flavours; perfect and imperfect. The former funct
 
 ##### Perfect multicollinearity
 
-The official definition of perfect multicollinearity is that there is a **perfect linear combination** amongst your variables. That means that there is not one optimal solution, but instead many (actually, infinitely many) more. Let us illustrate this by the following example. Suppose you include $STR$ twice in your regression. Now, `R` produces then the following output:
+The official definition of perfect multicollinearity is that there is a **perfect linear combination** amongst your variables. That means that there is not one optimal solution, but instead many (actually, infinitely many) more. Let us illustrate this by the following example. Suppose you include $STR$ twice in your regression. Now, `python` produces then the following output:
 
-```{r}
-CASchools$str2 <- CASchools$str
-model_4 <- lm(testscr ~ str + str2 + english, data = CASchools)
-summary(model_4)
+```{python}
+data['STR2'] = data['STR']
+model_4 = smf.ols('testscr ~ STR + STR2 + english', data = data).fit(cov_type = "HC0")
+print(model_4.summary())
 ```
 
-See that `R` drops one the $STR2$ variable (which is similar to the $STR$ variable. But why is that? See that the impact of twice this variable should be equivalent to:
+See that `python` halves the impact of the $STR$ variable. So both $STR$ and $STR2$ have a similar impact half the impact of the original $STR$ variable. Note as well that suddenly Python starts to produce warning (above the output table and below the output table in note [2]) But why is that? See that the impact of twice this variable should be equivalent to:
 \begin{equation}
 \beta_1 STR = w_1 \beta_1 STR + w_2 \beta_1 STR = (w_1 + w_2) \beta_1 STR ,
 \end{equation}
@@ -191,8 +218,8 @@ The violation of no perfect multicollearity often occurs when using dummies (see
 A different way of seeing this is to consider the following regression model and note that by definition $D_i = 1- B_i$:
 
 \begin{align}
-Testscr_i &= \beta_0 + \beta_1 D_i + \beta_2 B_i + u_i\\
-          &= \beta_0 + \beta_1 D_i + \beta_2 (1 - D_i) + u_i\\
+Testscr_i &= \beta_0 + \beta_1 D_i + \beta_2 B_i + u_i \notag \\
+          &= \beta_0 + \beta_1 D_i + \beta_2 (1 - D_i) + u_i \notag \\
           &= (\beta_0 + \beta_2) + (\beta_1 - \beta_2) D_i + u_i.
 \end{align}
 Suppose that the true constant equals $680$ and the slope parameter equals $7$. Then it is not difficult to see that there is an **infinite** amount of combinations possible of values for $\beta_0, \beta_1$ and $\beta_2$ that leads to these numbers.
@@ -254,50 +281,44 @@ F = \frac{1}{2} \left(\frac{t_1^2 + t_2^2 - 2\hat{\rho}_{t_1,t_2}t_1 t_2}{1-\hat
 
 where $\hat{\rho}_{t_1,t_2}$ estimates the correlation between $t_1$ and $t_2$. Reject when $F$ is large (typically to be determined from large statistical tables). The $F$-statistic is large when $t_1$ and/or $t_2$ is large and the $F$-statistic corrects (in just the right way) for the correlation between $t_1$ and $t_2$. The formula for more than two $\beta$'s is nasty unless you use matrix algebra. There is a nice large-sample ($n>50$) approximate distribution, which is the tail probability of the $\chi^2_q /q$ distribution beyond the $F$-statistic actually computed.
 
-Now, `R` does this in a much easier way by invoking the `linearHypothesis` which is in the `car` package. So, for example, we want to test the joint hypothesis that the population coefficients on $str$ and expenditures per pupil ($expenditure$) are both zero, against the alternative that at least one of the population coefficients is nonzero.
+Now, `Python` does this in a much easier way by invoking the `f_test` method which is in the `statsmodels.api` package. So, for example, we want to test the joint hypothesis that the population coefficients on $str$ and expenditures per pupil ($expenditure$) are both zero, against the alternative that at least one of the population coefficients is nonzero.
 
-```{r}
-library(car)
-model_5 <- lm(testscr ~ str + expenditure + english, data = CASchools)
-linearHypothesis(model_5, c("str=0", "expenditure=0"))
+```{python}
+model_5 = smf.ols('testscr ~ STR + expenditure + english', data = data).fit(cov_type = "HC0")
+print(model_5.summary())
+hypotheses = '(STR = 0), (expenditure = 0)'
+f_test = model_5.f_test(hypotheses)
+print(f_test)
 ```
 
-The output shows an $F$-statistic with $q=2$ restrictions (degrees of freedom of Df) with outcome 8.01. Do not directly interpret this number, but know that $\text{Prob} > F = 0.00386$ gives the probability that under the null-hypothesis this outcome is produced. So the joint null-hypothesis that both types of expenditures are zero (at the same time), can be rejected at a 5% (and a 1%) significance level. Other types of joint tests can easily be constructed as well. For example, when you want to know whether both coefficient add up to 1, then you would state `linearHypothesis(model_5, "str + expenditure=1")`. The final point to make is the $F$-test in the regression output itself. Here, that is for example `F(3, 416) = 107.5`. This is a joint test that all variables, except the constant, have no impact. So, $\beta_i = 0$ for all $i$ at the **same time**. It not often that you come across a general regression $F$-test that does not reject the null-hypothesis. It namely implies that your independent variables do not contain any information about the dependent variable.
+The output shows an $F$-statistic with $q=2$ restrictions (degrees of freedom or Df) with outcome 5.49. Do not directly interpret this number, but know that $\text{Prob} > F = 0.0044$ gives the probability that under the null-hypothesis this outcome is produced. So the joint null-hypothesis that both types of expenditures are zero (at the same time), can be rejected at a 5% (and a 1%) significance level. Other types of joint tests can easily be constructed as well. For example, when you want to know whether both coefficient add up to 1, then you would state `hypotheses = '(STR + expenditure = 1)'`. The final point to make is the $F$-test in the regression output itself. Here, that is for example `F = 148.6`. This is a joint test that all variables, except the constant, have no impact. So, $\beta_i = 0$ for all $i$ at the **same time**. It not often that you come across a general regression $F$-test that does not reject the null-hypothesis. It namely implies that your independent variables do not contain any information about the dependent variable.
 
-And with the $F$-test, we now have discussed all regression outcome components displayed by `R`. Most of this information you do not need for your report but we will come back later to this.
+And with the $F$-test, we now have discussed the most important regression outcome components displayed by `Python`. Most of this information you do not need for your report but we will come back later to this.
 
 ## Non-linear specifications {#sec-nonlinear}
 
 The model we are using is coined the *linear* regression model, and, indeed, one of the underlying assumptions is that the relations between the independent and dependent variables are linear. Consider the relation again between test scores and class sizes in the Californian school district data. Using the following code (note we now combine a scatter plot with a population regression line):
 
-```{r}
-#| fig.cap: "A possible linear relation between test scores and student teacher ratios"
-#| label: 'fig-scatterlfitcaschool'
-model_1 <- lm(testscr ~ str, data = CASchools)
-plot(CASchools$str, CASchools$testscr,
-     col = "sienna",
-     pch = 20,
-     xlab = "Student teacher ratio", 
-     ylab = "Test score",
-     cex.main = 0.9)
-
-abline(model_1, col = "tomato", lwd = 2)
+```{python}
+#| echo: TRUE
+#| label: fig-cloud2
+#| fig-cap: "Scatterplot and estimated regression line"
+sns.regplot(data = data, x = "STR" , y = "testscr", ci = None)
+plt.text(x=20, y=700, s="$\widehat{TestScore} = 698.9 - 2.28 \\times STR$", fontsize=11, color='black')
+plt.xlabel("Student-teacher ratio")
+plt.ylabel("Testscore")
+plt.show()
 ```
 
-Indeed, there might be evidence that the relation depicted in @fig-scatterlfitcaschool---if anything---is linear. But, clearly that is not the case for the relation between test scores and average district income. Namely, the syntax below:
+Indeed, there might be evidence that the relation depicted in @fig-cloud2---if anything---is linear. But, clearly that is not the case for the relation between test scores and average district income. Namely, the syntax below:
 
-```{r}
+```{python}
 #| fig.cap: "A possible non-linear relation between test scores and average district income"
 #| label: 'fig-scatterincome'
-model_2 <- lm(testscr ~ income, data = CASchools)
-plot(CASchools$income, CASchools$testscr,
-     col = "sienna",
-     pch = 20,
-     xlab = "Average district income", 
-     ylab = "Test score",
-     cex.main = 0.9)
-
-abline(model_2, col = "tomato", lwd = 2)
+sns.regplot(data = data, x = "income" , y = "testscr", ci = None)
+plt.xlabel("Average district income")
+plt.ylabel("Testscore")
+plt.show()
 ```
 
 @fig-scatterincome shows a non-linear relation, where the effect of income tapers off (note the similarity with @fig-marginalutility)---or, there is a marginal decreasing effect of average district income with respect to average school test scores. Thus, in affluent neighborhood test scores are higher, but increasingly less so. Of course, you can still try to estimate this with a linear population regression line as in @fig-scatterincome, but this introduces a well a **bias**. The estimate does not capture that what you want. Namely, it now holds that $E(u \mid X = x) \neq 0$, because for small $X$, say $X<10$, the residuals are negative, for medium sized $X$s most residuals are positive and for large $X>40$ all residuals are negative again. So, there is a clear relation between $X$ and $u$ and they fail to be independent. This particular form of bias is coined **specification bias**. There is another issue here and that is that the effect on $Y$ of a change in $X$ depends on the value of $X$---that is, the *marginal* effect of $X$ is not constant. Again, remember in a regression context the marginal effect is denoted by the **slope** of the population regression line.
@@ -326,43 +347,28 @@ TestScore_i = \beta_0 + \beta_1 Income_i + \beta_2 (Income_i)^2 +
 \beta_3 (Income_i)^3 + u_i
 \end{equation}
 
-First, we focus on the estimation of the quadratic function. In `R` this would look like:
-```{r}
-model_6 <- lm(testscr ~ income + I(income^2), data = CASchools)
-summary(model_6)
+First, we focus on the estimation of the quadratic function. In `Python` this would look like:
+```{python}
+model_5 = smf.ols('testscr ~ income + I(income**2)', data = data).fit(cov_type = "HC0")
+print(model_5.summary())
 ```
-Note that `I()` function here, which means that within a regression formula you can do a transformation of a variable. 
+Note that `I()` function here, which means that within a regression formula you can do a transformation of a variable.
 
 Now, it is straightforward to test the null-hypothesis of linearity against the alternative that the regression function is a quadratic. Namely, we only have to consider the $t$-statistic of the quadratic term. And that is larger than 1.96, so against a 5% significance level we reject the null-hypothesis of linearity.
 
 
-Plotting of non-linear population regression lines is a bit tricky. Namely, you want to combine a polynomial with a linear dimension. One way of doing this is as follows:
-```{r}
+Plotting of polynomial population regression lines is rather straightforward with `seaborn`. Here, you want to combine a polynomial with a linear dimension. One way of doing this is as follows, using the `order` command[An order of 2 gives a quadratic fit, an order of 3 a cubic, and so on. Note as well that I call the `regplot` now three times but that is to control the legend entries (labels starting with an underscore `_` do not create a legend entry).]{.aside}:
+```{python}
 #| fig.cap: "Two fitted regression lines for the relation between test scores and average district income"
 #| label: 'fig-scatterqua'
-model_2 <- lm(testscr ~ income, data = CASchools)
-
-plot(CASchools$income, CASchools$testscr,
-     col = "sienna",
-     pch = 20,
-     xlab = "Average district income", 
-     ylab = "Test score",
-     cex.main = 0.9)
-
-abline(model_2, col = "tomato", lwd = 2)
-
-lines(sort(CASchools$income), 
-      fitted(model_6)[order(CASchools$income)], 
-      col = "cornflowerblue", 
-      lwd = 2)
-
-legend("bottomright",
-       legend = c("linear model", "quadratic model"),
-       lwd = 2,
-       col = c("tomato", "cornflowerblue"))
+sns.regplot(data = data, x = "income" , y = "testscr", ci = None, color = 'steelblue', label = '_1')
+sns.regplot(data = data, x = "income" , y = "testscr", scatter = False, ci = None, color = 'steelblue', label = 'linear model')
+sns.regplot(data = data, x = "income" , y = "testscr", scatter = False, order = 2 , ci = None, color='sienna', label = 'Quadratic model')
+plt.xlabel("Average district income")
+plt.ylabel("Testscore")
+plt.legend(title= "", loc= "lower right")
+plt.show()
 ```
-This code is slightly more cumbersome. Namely, we use here the fitted values of the quadratic regression.  Note, though, that we have to `sort` and `order` both income and the fitted values from small to large to get a smooth line (this is problematic in every statistical program as you otherwise get very strange lines). And this provides the nice curved population regression line in the following `R` output.
-
 But what is now the marginal effect of average district income. That, now, depends on itself. Namely, $\frac{\partial \text{testscore}}{\partial \text{income}} = \beta_1 + \beta_2 \text{income}$. Another way of seeing this is to compute the effects for different values of $X$
 \begin{equation}
 \widehat{TestScore_i} = 607.3 + 3.85 Income_i - 0.0423(Income_i)^2
@@ -395,9 +401,9 @@ kable(df,
 Thus, the effect of a change in income is greater at low than high income levels (perhaps, a declining marginal benefit of an increase in school budgets?). But, be careful here! What is the effect of a change from 65 to 66? That is negative and already @fig-scatterqua shows that a quadratic specification starts to decline after the value of about 50; and perhaps that is not the behavior that you want. So, with polynomials it is essential not to extrapolate outside the range of the data (and still interpret the outcome).
 
 The estimation of a cubic specification is straightforward:
-```{r}
-model_7 <- lm(testscr ~ income + I(income^2) + I(income^3), data = CASchools)
-summary(model_7)
+```{python}
+model_6 = smf.ols('testscr ~ income + I(income**2) + I(income**3)', data = data).fit(cov_type = "HC0")
+print(model_6.summary())
 ```
 Where if we now want to test the null-hypothesis of linearity, then we have to invoke an $F$-test. Namely, the alternative hypothesis is that the population regression is quadratic and/or cubic, that is, it is a polynomial of degree up to 3, so:
 
@@ -406,8 +412,10 @@ Where if we now want to test the null-hypothesis of linearity, then we have to i
 
 And the outcome below shows that the null-hypothesis that the population regression is linear is rejected at the 5% (and 1%) significance level against the alternative that it is a polynomial of degree up to 3.
 
-```{r}
-linearHypothesis(model_7, c("I(income^2)", "I(income^3)"))
+```{python}
+hypotheses = 'I(income ** 2) , I(income ** 3)'
+f_test = model_6.f_test(hypotheses)
+print(f_test)
 ```
 
 ### Interaction variables
@@ -523,53 +531,27 @@ Hypothesis testing is as before. To test whether the two regression lines have t
 
 Finally, the question may arise how to draw such lines as in @fig-interaction. For this the following code is very useful:
 
-```{r}
-CASchools$hiel <- CASchools$english >= 10
-model_8 <- lm(testscr ~ str + hiel + I(str * hiel), data = CASchools)
-summary(model_8)
+```{python}
+data['hiel'] = data['english'] >= 10
+model_8 =  smf.ols('testscr ~ STR + hiel + STR : hiel', data = data).fit(cov_type = "HC0")
+model_8.summary()
 ```
 
-So, first, we generate a new dummy variable `hiel` as discussed above. Then we regress testscores on class size, the new `hiel` dummy variable and the interaction with the `I()` command. Finally, we can draw the figure as follows:
+So, first, we generate a new dummy variable `hiel` as discussed above. Then we regress testscores on class size, the new `hiel` dummy variable and the interaction with the `:` operator. Finally, we can draw the figure as follows:
 
-```{r}
+```{python}
 #| fig.cap: "Predicted population regression lines of districts with large and small percentage english learners"
 #| label: 'fig-interactionplot'
-
-# identify observations with PctEL >= 10
-id <- CASchools$english >= 10
-
-# plot observations with HiEL = 0 as red dots
-# the ! means here not the sample by id
-plot(CASchools$str[!id], CASchools$testscr[!id],
-     pch = 20,
-     col = "sienna",
-     main = "",
-     xlab = "Class Size",
-     ylab = "Test Score")
-
-# plot observations with HiEL = 1 as blue dots
-points(CASchools$str[id], CASchools$testscr[id],
-     pch = 20,
-     col = "cornflowerblue")
-
-# read out estimated coefficients of bci_model
-coefs <- model_8$coefficients
-
-# draw the estimated regression line for HiEL = 0
-abline(coef = c(coefs[1], coefs[2]),
-       col = "sienna",
-       lwd = 1.5)
-
-# draw the estimated regression line for HiEL = 1
-abline(coef = c(coefs[1] + coefs[3], coefs[2] + coefs[4]),
-       col = "cornflowerblue", 
-       lwd = 1.5 )
-
-# add a legend to the plot
-legend("topright", 
-       pch = c(20, 20), 
-       col = c("sienna", "cornflowerblue"), 
-       legend = c("HiEL = 0", "HiEL = 1"))
+# we are going to add line with the number on the X-axis as X variable
+X = np.linspace(14, 26, num=20)
+# lmplot can use hue to determine different points
+# also name plot because otherwise you get two plots (?)
+g = sns.lmplot(x="STR", y="testscr", hue="hiel", data=data, fit_reg=False, legend = False)
+plt.ylabel("Testscore")
+plt.xlabel("Student teacher ratio")
+plt.plot(X, 682.2 - 0.969 * X, "blue")
+plt.plot(X, (682.2 + 5.639) + (-0.969 - 1.277) * X, "orange");
+plt.legend(title= "Large amount of english learners", labels = ["no", "yes"])
 ```
 
 Clearly, @fig-interactionplot shows that districts with more English learners (containing larger migrant communities) have lower test scores overall. Above that, class size seems to have a larger negative effect on districts with more English learners as the slope is more negative.
@@ -648,34 +630,20 @@ The model is now linear in $\ln(Income)$, so the linear-log model can be estimat
 \begin{equation}
 		\widehat{TestScore} = 557.8 + 36.42\times \ln(Income_i)
 \end{equation}
-so an 1\% increase in $Income$ is associated with an increase in test scores of 0.36 points on the test. And again, standard errors, confidence intervals, $R^2$---all the usual tools of regression apply here. But the difficulty in plottin the new regression line remains. Consider the following `R` syntax, where we first have to define the new regressor by invoking the `generate` command.
+so an 1\% increase in $Income$ is associated with an increase in test scores of 0.36 points on the test. And again, standard errors, confidence intervals, $R^2$---all the usual tools of regression apply here. But the difficulty in plottin the new regression line remains. Consider the following `Python` syntax, where we first have to define the new regressor by invoking the `generate` command.
 
-```{r}
-#| fig.cap: "A non-linear relation"
+```{python}
+#| fig.cap: "A non-linear relation with the log of average district income"
 #| label: 'fig-scatterlnincome'
-CASchools$lnincome <- log(CASchools$income)
-model_9 <- lm(testscr ~ lnincome, data = CASchools)
-summary(model_9)
-plot(CASchools$income, CASchools$testscr,
-     pch = 20,
-     col = "sienna",
-     main = "",
-     xlab = "Class Size",
-     ylab = "Test Score")
-
-order_id  <- order(CASchools$income)
-
-abline(model_2, col = "tomato", lwd = 2)
-
-lines(CASchools$income[order_id], 
-      fitted(model_9)[order_id], 
-      col = "cornflowerblue", 
-      lwd = 2)
-
-legend("bottomright",
-       legend = c("linear model", "linear-log model"),
-       lwd = 2,
-       col = c("tomato", "cornflowerblue"))
+data['lnincome'] = np.log(data['income'])
+model_9 = smf.ols('testscr ~ lnincome', data = data).fit(cov_type = "HC0")
+model_9.summary()
+sns.regplot(data = data, x = "income" , y = "testscr", color = 'steelblue', fit_reg = False)
+plt.xlabel("Average district income")
+plt.ylabel("Testscore")
+X = np.linspace(5, 55, num=20)
+plt.plot(X, 557.8323 + 36.4197 * np.log(X), linewidth=2 )
+plt.show()
 ```
 
 
@@ -731,37 +699,22 @@ where the interpretation is that an 1\% increase in $Income$ is associated with 
 
 Suppose that we now want to plot both the log-linear and the log-log specification, then we can use the following syntax:
 
-```{r}
+```{python}
 #| fig.cap: "A non-linear relation"
 #| label: 'fig-scattercompare'
-CASchools$lntestscr <- log(CASchools$testscr)
-model_10 <- lm(lntestscr ~ income, data = CASchools)
-summary(model_10)
-model_11 <- lm(lntestscr ~ lnincome, data = CASchools)
-summary(model_11)
-plot(CASchools$income, CASchools$lntestscr,
-     pch = 20,
-     col = "sienna",
-     main = "",
-     xlab = "Class Size",
-     ylab = "log(Test Score)")
-
-order_id  <- order(CASchools$income)
-
-lines(CASchools$income[order_id], 
-      fitted(model_10)[order_id], 
-      col = "tomato", 
-      lwd = 2)
-
-lines(CASchools$income[order_id], 
-      fitted(model_11)[order_id], 
-      col = "cornflowerblue", 
-      lwd = 2)
-
-legend("bottomright",
-       legend = c("log-linear model", "log-log model"),
-       lwd = 2,
-       col = c("tomato", "cornflowerblue"))
+data['lntestscr'] = np.log(data['testscr'])
+model_10 = smf.ols('lntestscr ~ income', data = data).fit(cov_type = "HC0")
+# notes the tables method to shrink the outcomes a bit
+model_10.summary().tables[1]
+model_11 = smf.ols('lntestscr ~ lnincome', data = data).fit(cov_type = "HC0")
+model_11.summary().tables[1]
+g = sns.lmplot(x="income", y="lntestscr", data=data, fit_reg=False, legend = False)
+plt.xlabel("Average district income")
+plt.ylabel("Testscore (in logs)")
+X = np.linspace(5, 55, num=20)
+plt.plot(X, 6.3363 + 0.0554 * np.log(X), linewidth=2, label = "log-log specification" )
+plt.plot(X, 6.4394 + 0.0028 * X, linewidth=2, label = "log-linear specification" )
+plt.legend(title= "", loc= "lower right")
 ```
 
 Note that the $y$-axis is on a logarithmic scale here, thus the log-linear specification is now a linear line.
@@ -774,17 +727,17 @@ We have seen three different cases of logarithmic specification, differing in wh
 
 Multivariate regression is a powerful tool for controlling for the effect of variables for which we have data. But often we do not have data on what we suspect might be important---such as individual characteristics like ambition, intelligence, drive or stamina. Or regional of country data, where the type of soil, the ruggedness (hilliness), or population density determine to a large extent the behavior of people living on it. If we do not have this type of data, then it is not always the case that everything is lost. Especially, when we have repeated observations, so observations on the same entity throughout time. This is referred to as panel data and requires one additional subscript $t$ as in $X_{it}$ indicating the observation $X$ on individual $i$ made at time $t$. To understand why this sometimes works, we temporarily change to another dataset and that is the 'fatality' data collected by @levitt2001dangerous which deals with the relation between drunk driving and fatal accidents in the States of the US between 1982 and 1988. For this particular example we look at the impact of the 'beer tax', measured as the real tax in dollars on a case of beer, on 'fatality', measured as the number of annual traffic deaths per 10,000 people in the population of each state. For this we first read the data and manipulate the mortality variable.
 
-```{r}
-data(Fatalities)
+```{python}
+df_fatality = pd.read_csv('/Users/tomba/projects/syllabus_python/data/fatality.csv')
 # define the fatality rate
-Fatalities$fatal_rate <- Fatalities$fatal / Fatalities$pop * 10000
+df_fatality['fatal_rate'] =  df_fatality['fatal'] / df_fatality['pop'] * 10000
 ```
 
 and then run a simple regression:
 
-```{r}
-model_12 <- lm(fatal_rate ~ beertax, data = Fatalities)
-summary(model_12)
+```{python}
+model_12 = smf.ols('fatal_rate ~ beertax', data = df_fatality).fit(cov_type = "HC0")
+model_12.summary()
 ```
 But these outcomes are very strange. For every dollar increase in tax, number of fatal accidents per 10,000 people increases with 0.36, which is statistically significantly different from 0. What is going on here. Most likely this effect is biased because of omitted variable bias. States in the US differ widely in terms of population density, environment, institutions, religion, poverty, and so on and so forth. And those state characteristics might influence both the variables beertax and fatality.
 
@@ -792,12 +745,13 @@ Fortunately, for each state we have yearly data. In fact for each state we have 
 \begin{equation}
 \text{fatality}_{it} = \beta_0 + \beta_1\text{beertax}_{it} + \beta_3 S_1 + \ldots + \beta_51 S_{47} + u_{it},
 \end{equation}
-where $S_i$ denote indicator (dummies) for each state which constitute the fixed effects. In total there are 48 states in this dataset, so we have 47 dummies (we have to leave out 1 dummy because of the *dummy trap*---`R` does this automatically). Note that these fixed effects only depend on variation over states, not over years. So, essentially what these fixed effects capture is all state **specific** characteristics which are **constant** over time. And most of the characteristics' examples given above do not vary that much over time, so by using these state fixed effects we can **control** for them. In `R` you can estimate this in a straightforward way as (but note all these additional coefficients for the US states):
-```{r}
-model_13 <- lm(fatal_rate ~ beertax + factor(state), data = Fatalities)
-summary(model_13)
+where $S_i$ denote indicator (dummies) for each state which constitute the fixed effects. In total there are 48 states in this dataset, so we have 47 dummies (we have to leave out 1 dummy because of the *dummy trap*---`R` does this automatically). Note that these fixed effects only depend on variation over states, not over years. So, essentially what these fixed effects capture is all state **specific** characteristics which are **constant** over time. And most of the characteristics' examples given above do not vary that much over time, so by using these state fixed effects we can **control** for them. In `Python` you can estimate this in a straightforward way as (but note all these additional coefficients for the US states):[To be sure we use the `C()` syntax which ensures that the variable inside the parentheses is treated as a categorical variables (and thus creates all these kinds of dummy variables, one for each state).]{.aside}
+
+```{python}
+model_13 = smf.ols('fatal_rate ~ beertax + C(state)', data = df_fatality).fit(cov_type = "HC0")
+model_13.summary()
 ```
-Now, see what happens with the coefficient of the beer tax variable. It changes sign! So from positive it becomes negative. That is how **disruptive** omitted variable bias can be. Also see that by including all these state fixed effects, the $\bar{\text{R}^2}$ now increases enormously to 89%, which does make sense because the states explain the variation in fatality rate to a large extent (e.g., compare Georgia (`ga`) with New York (`ny`)).
+Now, see what happens with the coefficient of the beer tax variable. It changes sign! So from positive it becomes negative. That is how **disruptive** omitted variable bias can be. Also see that by including all these state fixed effects, the $\bar{\text{R}^2}$ now increases enormously to 89%, which does make sense because the states explain the variation in fatality rate to a large extent (e.g., compare Georgia (`T.ga`) with New York (`T.ny`)).
 
 This is just a snapshot of the use of fixed effects in panel data, but for now this is enough. The main message you should take home with it that the use of fixed effects can go a long way in addressing omitted variable bias.
 
