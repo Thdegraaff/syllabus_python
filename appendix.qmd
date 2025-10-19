@@ -130,13 +130,15 @@ reps = 10000
 np.random.seed(42)
 
 # perform random sampling
-sample_means = []
+sample_means = [] # empty array
+# fill array with mean of coin throws
 for i in range(reps):
     coin_2 = np.random.binomial(throw, 0.78)
     sample_means.append(np.mean(coin_2) / throw)
 
 # Create histogram
 plt.hist(sample_means)
+# Add vertical line denoting theoretical mean
 plt.axvline(x = .78, color = 'red', label = 'Probability tails')
 plt.legend()
 plt.show()

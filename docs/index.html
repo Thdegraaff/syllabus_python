@@ -9,7 +9,7 @@
 <meta name="author" content="Thomas de Graaff">
 <meta name="dcterms.date" content="2025-10-07">
 
-<title>Socio-economic analysis with Python</title>
+<title>Social-economic analysis with Python</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -80,7 +80,7 @@ window.MathJax = {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -104,7 +104,7 @@ window.MathJax = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Socio-economic analysis with <code>Python</code></a> 
+      <a href="./">Social-economic analysis with <code>Python</code></a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -123,7 +123,31 @@ window.MathJax = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Packages used in this chapter</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./linear_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Regression Analysis in the Social Sciences</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multivariate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Modeling in the Social Sciences</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./assessment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Specification and Assessment Issues</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">In conclusion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -169,11 +193,11 @@ window.MathJax = {
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Socio-economic analysis with <code>Python</code></h1>
+<h1 class="title">Social-economic analysis with <code>Python</code></h1>
 </div>
 
 
@@ -202,20 +226,20 @@ window.MathJax = {
 </header>
 
 
-<section id="preface" class="level1 unnumbered">
+<section id="preface" class="level1 unnumbered page-columns page-full">
 <h1 class="unnumbered">Preface</h1>
 <section id="what" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="what">What</h2>
-<p>This syllabus provides the course material for the first three weeks of the course <strong>Sociaaleconomische Analyse</strong> (in Dutch). With this course we would like to bridge the gap between on the one hand applied statistics and (micro-economic) modeling and on the other hand putting all this in practice when performing empirical research. As such this course can as well be seen as preparation for the bachelor thesis. But above all, the course aims to provide students with some tools that we see as very useful for research; not only in the socio-economic sciences but outside them as well.</p>
+<p>This syllabus provides the course material for the first three weeks of the course <strong>Sociaaleconomische Analyse</strong> (in Dutch). With this course we would like to bridge the gap between, on the one hand, applied statistics and (micro-economic) modeling and on the other hand putting all this in practice when performing empirical research. As such this course can as well be seen as preparation for the bachelor thesis. But above all, the course aims to provide students with some tools that we see as very useful for research; not only in the socio-economic sciences but outside them as well.</p>
 <p>As we only have a limited amount of time available for this course, the amount of topics we can deal with is by its nature restricted. We decided to focus in the first three week on the basics of applied econometrics and as such this first part builds upon the foundations of the statistics course in the first period of the second year. But now we challenge the student to build more elaborate statistical models where specific attention is given to <em>presentation</em> and <em>interpretation</em> of the results. The last three parts of the course move on to economic welfare from a behavioral perspective. Not only is the concept of economic welfare central to almost all economic theories, the behavioral perspective allows for more <em>reflection</em> on the neo-classical assumptions typically made in introductionary economic courses.</p>
 </section>
 <section id="why" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="why">Why</h2>
 <p>Although there are many and very good introductory textbooks on economic models and applied econometrics, the combination of the two is seldom seen. Apart from that there are two reasons why we wanted to write our own material. First, usually less time is spent on why certain, and at first sight very restrictive, <em>assumptions</em> are made. We want to bridge that gap and provide the student with more intuition on where models, evidence, and finally perhaps the “truth” (if there is such a thing) comes from. Second, how to <em>present</em> statistical evidence and the <em>interpretation</em> of that evidence is very important but usually not given much attention.</p>
 </section>
-<section id="for-whom" class="level2 unnumbered">
+<section id="for-whom" class="level2 unnumbered page-columns page-full">
 <h2 class="unnumbered anchored" data-anchor-id="for-whom">For Whom</h2>
-<p>This syllabus assumes that the reader has a basic working knowledge of statistics, data science and some calculus (typically those method courses Earth, Economics and Sustainability students enjoy in their first year and in period I of the second year). The syllabus can however be read as stand-alone, although that requires some more attentive reading and practising. Where we think it is necessary we provide (references to) background material. For the course <strong>Sociaaleconomische analyse</strong> both types of syllabi should be read <strong>in total</strong> and it might be wise to read the relevant material <em>before</em> the respective lecture. The big advantage of course is that lectures and reading material now really go one to one.</p>
+<div class="page-columns page-full"><p>This syllabus assumes that the reader has a basic working knowledge of statistics, data science and some calculus (typically those method courses Earth, Economics and Sustainability students enjoy in their first year and in period I of the second year). The syllabus can however be read as stand-alone, although that requires some more attentive reading and practising. Where we think it is necessary we provide (references to) background material. For the course <strong>Sociaaleconomische analyse</strong> both types of syllabi should be read <strong>in total</strong> and it might be wise to read the relevant material <em>before</em> the respective lecture. The big advantage of course is that lectures and reading material now really go one to one.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">More specifically the courses <em>Wiskunde voor AED</em>, <em>Inleiding Economie</em>, <em>Modeling Future Earth</em> and <em>Statistiek en Data-analyse</em>.</span></div></div>
 
 
 </section>
@@ -635,8 +659,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./intro.html" class="pagination-link" aria-label="Packages used in this chapter">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Packages used in this chapter</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./intro.html" class="pagination-link" aria-label="Introduction">
+        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

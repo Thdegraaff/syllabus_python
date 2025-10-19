@@ -1,6 +1,6 @@
 # Specification and Assessment Issues {#sec-specification}
 
-This concluding chapter deals with an epistemological question, namely how to convey your key results, and an ontological question, how do you know whether what you convey is true (e.g., unbiased). To do so, we first look at specification issues in @sec-specificationmodel. Which variables should you include? Thereafter, @sec-presentation discusses how to present your results. And, subsequently, @sec-sourcesbias deals with the question about the validity of your results. When do you know that you really obtained estimated an **unbiased** parameter. The final section concludes.
+This concluding chapter deals with an epistemological question [Epistemology says something about what knowledge is and how we communicate that knowledge.]{.aside}, namely how to convey your key results, and an ontological question [Ontology is more about the nature of being and our own 'beliefs' in that.]{.aside}, how do you know whether what you convey is true (e.g., unbiased). To do so, we first look at specification issues in @sec-specificationmodel. Which variables should you include? Thereafter, @sec-presentation discusses how to present your results. And, subsequently, @sec-sourcesbias deals with the question about the validity of your results. When do you know that you really obtained estimated an **unbiased** parameter. The final section concludes.
 
 ## Specification of your model {#sec-specificationmodel}
 

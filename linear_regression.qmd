@@ -18,8 +18,10 @@ library(reticulate)
 # Python packages we need for this chapter
 import numpy as np
 import pandas as pd
+# for making nice plots in combination with matplotlib
 import seaborn as sns
 from scipy import stats
+# for regression related stuff
 import statsmodels.api as sm
 # the next package allows us to formula's for ols
 import statsmodels.formula.api as smf
@@ -37,9 +39,9 @@ U(x_1, x2) = x_1^\alpha \cdot x_2^\beta
 
 Here, the quantities of the goods $x_1$ and $x_2$ are considered to be **known**---also often referred to as **data**. In theoretical work they are fictional or sometimes simulated. The parameters $\alpha$ and $\beta$ are **not known** and we often want to **estimate** them. If we know what the parameters $\alpha$ and $\beta$ should be, then we can calculate what utility a certain amount of consumption of both goods gives and then, for example, assess which combination of goods gives maximum utility.  
 
-This course is about using data to quantify (socio-economic) parameters. Moreover, we focus on measuring **causal** effects, instead of mere correlations. Note, that in an ideal world, we would like conducting experiments as to measure a causal relation of a phenomenon $X$ on $Y$. However, we almost always only have observational data on, for example, demand and prices.[Moreover, very often experiments are not feasible or highly unethical.]{.aside} Therefore, this course and syllabus deals with (*i*) difficulties arising from using observational data to estimate these causal effects and (*ii*) rewriting models as (\ref{eq:directutility}) such that we can actually *use* data to tease out values for---in this case---$\alpha$ and $\beta$.
+This course is about using data to quantify (socio-economic) parameters. Moreover, we focus on measuring **causal** effects, instead of mere correlations. Note, that in an ideal world, we would like conducting experiments as to measure a causal relation of a phenomenon $X$ on $Y$. However, we almost always only have observational data on, for example, demand and prices.[Moreover, very often experiments are not feasible or highly unethical.]{.aside} Therefore, this course and syllabus deals with (*i*) difficulties arising from using observational data to estimate these causal effects and (*ii*) rewriting models as (\ref{eq:directutility}) such that we can actually *use* data to tease out 'reasonable' values for---in this case---$\alpha$ and $\beta$.
 
-This chapter is organised as follows. The next section addresses the problem of finding a *relation* between some $X$ and some $Y$. Here, we follow an example from the well-known textbook of @stock2003introduction where we look at the relation between school class size and school class performance. At the same time, we also introduce some `R` commands. To do so, this section deals as well with the statistical framework that is needed for applied econometrics. Note that we assume that the reader already had a course in introductionary statistics and that we provide only the basic concepts most important for this course in @sec-reviewstat. 
+This chapter is organised as follows. The next section addresses the problem of finding a *relation* between some $X$ and some $Y$. Here, we follow an example from the well-known textbook of @stock2003introduction where we look at the relation between school class size and school class performance. At the same time, we also introduce some `Python` commands. To do so, this section deals as well with the statistical framework that is needed for applied econometrics. Note that we assume that the reader already had a course in introductionary statistics [Such as Statistiek en Data-analyse]{.aside} and that we provide only the basic concepts most important for this course in @sec-reviewstat. 
 
 ## So, what is the problem? {#sec-problem}
 
@@ -92,7 +94,7 @@ To import the data in `Python` you make use of the `read_csv()` function from `p
 # Note that the pathname is a string and should be in parentheses
 data = pd.read_csv('/Users/tomba/projects/syllabus_python/data/CASchools.csv')
 ```
-Note that we can comment on our code by the use of the `#`-sign. Everything after will not be used for computation.[When working with `Jupyter` notebooks, you do not have to specify the path as long as the data is in the same directory as the notebook.]{.aside} And I advise you to regularly comment on your code as that makes it easier for somebody and future you to understand the code. Moreover, the `=` symbol indicated that the output of the command on the right hand side is poured into a new object (somethings we conveniently in this case call `data` ) on the left hand side of this symbol. This object is now a so-called dataframe which you can open use further.
+Note that we can comment on our code by the use of the `#`-sign. Everything after the `#`-sign will not be used for computation.[When working with `Jupyter` notebooks, you do not have to specify the path as long as the data is in the same directory as the notebook.]{.aside} And I advise you to regularly comment on your code as that makes it easier for somebody and future you to understand the code. Moreover, the `=` symbol indicated that the output of the command on the right hand side is poured into a new object (somethings we conveniently in this case call `data` ) on the left hand side of this symbol. This object is now a so-called dataframe which you can open use further.
 <!-- For our purpose a much quicker way to load the `CASchools.csv` dataset is to use the `AER` package that contains many datasets that are often used for educational purposes.[But note that some data in this particular `CASchools` file still has to be transformed which I will do below.]{.aside} -->
 
 <!-- ```{r} -->
@@ -395,7 +397,7 @@ model_1 = smf.ols('testscr ~ STR', data=data).fit()
 print(model_1.summary())
 ```
 
-We will discuss the rest of this output later.
+We will discuss some of the rest of this output later.
 
 #### Hypothesis testing {#sec-unitesting}
 

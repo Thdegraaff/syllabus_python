@@ -128,7 +128,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -250,7 +250,7 @@ window.Quarto = {
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -271,7 +271,7 @@ window.Quarto = {
 </header>
 
 
-<p>This concluding chapter deals with an epistemological question, namely how to convey your key results, and an ontological question, how do you know whether what you convey is true (e.g., unbiased). To do so, we first look at specification issues in <a href="#sec-specificationmodel" class="quarto-xref"><span>Section 4.1</span></a>. Which variables should you include? Thereafter, <a href="#sec-presentation" class="quarto-xref"><span>Section 4.2</span></a> discusses how to present your results. And, subsequently, <a href="#sec-sourcesbias" class="quarto-xref"><span>Section 4.3</span></a> deals with the question about the validity of your results. When do you know that you really obtained estimated an <strong>unbiased</strong> parameter. The final section concludes.</p>
+<div class="page-columns page-full"><p>This concluding chapter deals with an epistemological question , namely how to convey your key results, and an ontological question , how do you know whether what you convey is true (e.g., unbiased). To do so, we first look at specification issues in <a href="#sec-specificationmodel" class="quarto-xref"><span>Section 4.1</span></a>. Which variables should you include? Thereafter, <a href="#sec-presentation" class="quarto-xref"><span>Section 4.2</span></a> discusses how to present your results. And, subsequently, <a href="#sec-sourcesbias" class="quarto-xref"><span>Section 4.3</span></a> deals with the question about the validity of your results. When do you know that you really obtained estimated an <strong>unbiased</strong> parameter. The final section concludes.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Epistemology says something about what knowledge is and how we communicate that knowledge.</span><span class="margin-aside">Ontology is more about the nature of being and our own ‘beliefs’ in that.</span></div></div>
 <section id="sec-specificationmodel" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-specificationmodel"><span class="header-section-number">4.1</span> Specification of your model</h2>
 <p>A long-standing but simple question is how to decide which variables to include in a regression model. Unfortunately, the answer to this question is rather complex. A straightforward but naive approach would be to include them all! So, throw every variable in that is in your database. This, however, leads to “causal salad” <span class="citation" data-cites="mcelreath2020statistical">(a term coined by <a href="references.html#ref-mcelreath2020statistical" role="doc-biblioref">McElreath 2020</a>)</span> as displayed in Figure <a href="#fig-causalsalad" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> and can actually lead to a biased estimator. One reason for this is that if you include a variable that is related to the error term then all other parameters are biased as well.</p>

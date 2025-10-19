@@ -334,12 +334,14 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Python packages we need for this chapter</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># the next package allows us to formula's for ols</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># for making nice plots in combination with matplotlib</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># for regression related stuff</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># the next package allows us to formula's for ols</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="introduction" class="level2 page-columns page-full" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2.1</span> Introduction</h2>
@@ -349,8 +351,8 @@ U(x_1, x2) = x_1^\alpha \cdot x_2^\beta
 \label{eq:directutility}
 \end{equation}\]</span></p>
 <p>Here, the quantities of the goods <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are considered to be <strong>known</strong>—also often referred to as <strong>data</strong>. In theoretical work they are fictional or sometimes simulated. The parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are <strong>not known</strong> and we often want to <strong>estimate</strong> them. If we know what the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> should be, then we can calculate what utility a certain amount of consumption of both goods gives and then, for example, assess which combination of goods gives maximum utility.</p>
-<div class="page-columns page-full"><p>This course is about using data to quantify (socio-economic) parameters. Moreover, we focus on measuring <strong>causal</strong> effects, instead of mere correlations. Note, that in an ideal world, we would like conducting experiments as to measure a causal relation of a phenomenon <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. However, we almost always only have observational data on, for example, demand and prices. Therefore, this course and syllabus deals with (<em>i</em>) difficulties arising from using observational data to estimate these causal effects and (<em>ii</em>) rewriting models as (<span class="math inline">\(\ref{eq:directutility}\)</span>) such that we can actually <em>use</em> data to tease out values for—in this case—<span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Moreover, very often experiments are not feasible or highly unethical.</span></div></div>
-<p>This chapter is organised as follows. The next section addresses the problem of finding a <em>relation</em> between some <span class="math inline">\(X\)</span> and some <span class="math inline">\(Y\)</span>. Here, we follow an example from the well-known textbook of <span class="citation" data-cites="stock2003introduction">Stock, Watson, et al. (<a href="references.html#ref-stock2003introduction" role="doc-biblioref">2003</a>)</span> where we look at the relation between school class size and school class performance. At the same time, we also introduce some <code>R</code> commands. To do so, this section deals as well with the statistical framework that is needed for applied econometrics. Note that we assume that the reader already had a course in introductionary statistics and that we provide only the basic concepts most important for this course in <a href="appendix.html" class="quarto-xref"><span>Appendix A</span></a>.</p>
+<div class="page-columns page-full"><p>This course is about using data to quantify (socio-economic) parameters. Moreover, we focus on measuring <strong>causal</strong> effects, instead of mere correlations. Note, that in an ideal world, we would like conducting experiments as to measure a causal relation of a phenomenon <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. However, we almost always only have observational data on, for example, demand and prices. Therefore, this course and syllabus deals with (<em>i</em>) difficulties arising from using observational data to estimate these causal effects and (<em>ii</em>) rewriting models as (<span class="math inline">\(\ref{eq:directutility}\)</span>) such that we can actually <em>use</em> data to tease out ‘reasonable’ values for—in this case—<span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Moreover, very often experiments are not feasible or highly unethical.</span></div></div>
+<div class="page-columns page-full"><p>This chapter is organised as follows. The next section addresses the problem of finding a <em>relation</em> between some <span class="math inline">\(X\)</span> and some <span class="math inline">\(Y\)</span>. Here, we follow an example from the well-known textbook of <span class="citation" data-cites="stock2003introduction">Stock, Watson, et al. (<a href="references.html#ref-stock2003introduction" role="doc-biblioref">2003</a>)</span> where we look at the relation between school class size and school class performance. At the same time, we also introduce some <code>Python</code> commands. To do so, this section deals as well with the statistical framework that is needed for applied econometrics. Note that we assume that the reader already had a course in introductionary statistics  and that we provide only the basic concepts most important for this course in <a href="appendix.html" class="quarto-xref"><span>Appendix A</span></a>.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Such as Statistiek en Data-analyse</span></div></div>
 </section>
 <section id="sec-problem" class="level2 page-columns page-full" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-problem"><span class="header-section-number">2.2</span> So, what is the problem?</h2>
@@ -393,7 +395,7 @@ U(x_1, x2) = x_1^\alpha \cdot x_2^\beta
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that the pathname is a string and should be in parentheses</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'/Users/tomba/projects/syllabus_python/data/CASchools.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="page-columns page-full"><p>Note that we can comment on our code by the use of the <code>#</code>-sign. Everything after will not be used for computation. And I advise you to regularly comment on your code as that makes it easier for somebody and future you to understand the code. Moreover, the <code>=</code> symbol indicated that the output of the command on the right hand side is poured into a new object (somethings we conveniently in this case call <code>data</code> ) on the left hand side of this symbol. This object is now a so-called dataframe which you can open use further. <!-- For our purpose a much quicker way to load the `CASchools.csv` dataset is to use the `AER` package that contains many datasets that are often used for educational purposes.[But note that some data in this particular `CASchools` file still has to be transformed which I will do below.]{.aside} --></p><div class="no-row-height column-margin column-container"><span class="margin-aside">When working with <code>Jupyter</code> notebooks, you do not have to specify the path as long as the data is in the same directory as the notebook.</span></div></div>
+<div class="page-columns page-full"><p>Note that we can comment on our code by the use of the <code>#</code>-sign. Everything after the <code>#</code>-sign will not be used for computation. And I advise you to regularly comment on your code as that makes it easier for somebody and future you to understand the code. Moreover, the <code>=</code> symbol indicated that the output of the command on the right hand side is poured into a new object (somethings we conveniently in this case call <code>data</code> ) on the left hand side of this symbol. This object is now a so-called dataframe which you can open use further. <!-- For our purpose a much quicker way to load the `CASchools.csv` dataset is to use the `AER` package that contains many datasets that are often used for educational purposes.[But note that some data in this particular `CASchools` file still has to be transformed which I will do below.]{.aside} --></p><div class="no-row-height column-margin column-container"><span class="margin-aside">When working with <code>Jupyter</code> notebooks, you do not have to specify the path as long as the data is in the same directory as the notebook.</span></div></div>
 <!-- ```{r} -->
 <!-- #| label: readdata_AER -->
 <!-- #| collectcode: TRUE -->
@@ -752,8 +754,8 @@ Figure&nbsp;2.5: Scatterplot and estimated regression line
 Dep. Variable:                testscr   R-squared:                       0.051
 Model:                            OLS   Adj. R-squared:                  0.049
 Method:                 Least Squares   F-statistic:                     22.58
-Date:                Fri, 17 Oct 2025   Prob (F-statistic):           2.78e-06
-Time:                        16:49:53   Log-Likelihood:                -1822.2
+Date:                Sun, 19 Oct 2025   Prob (F-statistic):           2.78e-06
+Time:                        12:00:15   Log-Likelihood:                -1822.2
 No. Observations:                 420   AIC:                             3648.
 Df Residuals:                     418   BIC:                             3657.
 Df Model:                           1                                         
@@ -774,7 +776,7 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</code></pre>
 </div>
 </div>
-<p>We will discuss the rest of this output later.</p>
+<p>We will discuss some of the rest of this output later.</p>
 </section>
 <section id="sec-unitesting" class="level4" data-number="2.3.2.2">
 <h4 data-number="2.3.2.2" class="anchored" data-anchor-id="sec-unitesting"><span class="header-section-number">2.3.2.2</span> Hypothesis testing</h4>
@@ -894,8 +896,8 @@ Y_i = \beta_0 + \beta_1 X_i + u_i
 Dep. Variable:                testscr   R-squared:                       0.035
 Model:                            OLS   Adj. R-squared:                  0.032
 Method:                 Least Squares   F-statistic:                     15.07
-Date:                Fri, 17 Oct 2025   Prob (F-statistic):           0.000120
-Time:                        16:49:53   Log-Likelihood:                -1825.9
+Date:                Sun, 19 Oct 2025   Prob (F-statistic):           0.000120
+Time:                        12:00:16   Log-Likelihood:                -1825.9
 No. Observations:                 420   AIC:                             3656.
 Df Residuals:                     418   BIC:                             3664.
 Df Model:                           1                                         
@@ -1083,8 +1085,8 @@ Figure&nbsp;2.13: Heteroskedasticity in Californation schools?
 Dep. Variable:                testscr   R-squared:                       0.035
 Model:                            OLS   Adj. R-squared:                  0.032
 Method:                 Least Squares   F-statistic:                     15.50
-Date:                Fri, 17 Oct 2025   Prob (F-statistic):           9.69e-05
-Time:                        16:49:53   Log-Likelihood:                -1825.9
+Date:                Sun, 19 Oct 2025   Prob (F-statistic):           9.69e-05
+Time:                        12:00:16   Log-Likelihood:                -1825.9
 No. Observations:                 420   AIC:                             3656.
 Df Residuals:                     418   BIC:                             3664.
 Df Model:                           1                                         
@@ -1155,8 +1157,8 @@ RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^n \hat{u}_i^2},
 Dep. Variable:                testscr   R-squared:                       0.051
 Model:                            OLS   Adj. R-squared:                  0.049
 Method:                 Least Squares   F-statistic:                     19.35
-Date:                Fri, 17 Oct 2025   Prob (F-statistic):           1.38e-05
-Time:                        16:49:53   Log-Likelihood:                -1822.2
+Date:                Sun, 19 Oct 2025   Prob (F-statistic):           1.38e-05
+Time:                        12:00:16   Log-Likelihood:                -1822.2
 No. Observations:                 420   AIC:                             3648.
 Df Residuals:                     418   BIC:                             3657.
 Df Model:                           1                                         
