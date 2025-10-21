@@ -1,5 +1,49 @@
 # Specification and Assessment Issues {#sec-specification}
 
+```{r}
+#| warning: FALSE
+#| message: FALSE
+#| echo: FALSE
+#| output: FALSE
+library(tidyverse)
+library(kableExtra)
+library(reticulate)
+# py_install("statsmodels")
+```
+
+```{python}
+#| warning: FALSE
+#| message: FALSE
+#| echo: true
+# Python packages we need for this chapter
+import numpy as np
+import pandas as pd
+# for making nice plots in combination with matplotlib
+import seaborn as sns
+from scipy import stats
+# for regression related stuff
+import statsmodels.api as sm
+# the next package allows us to formula's for ols
+import statsmodels.formula.api as smf
+# to create "nicer" output tables
+from statsmodels.iolib.summary2 import summary_col
+import matplotlib.pyplot as plt
+```
+
+```{python}
+#| warning: FALSE
+#| message: FALSE
+#| echo: FALSE
+
+data = pd.read_csv('/Users/tomba/projects/syllabus_python/data/CASchools.csv')
+
+# compute new variable STR and append it to data dataframe
+data['STR'] = data['students'] / data['teachers'] 
+
+# compute new variable TestScore and append it to data dataframe
+data['testscr'] = (data['read'] + data['math']) / 2 
+```
+
 This concluding chapter deals with an epistemological question [Epistemology says something about what knowledge is and how we communicate that knowledge.]{.aside}, namely how to convey your key results, and an ontological question [Ontology is more about the nature of being and our own 'beliefs' in that.]{.aside}, how do you know whether what you convey is true (e.g., unbiased). To do so, we first look at specification issues in @sec-specificationmodel. Which variables should you include? Thereafter, @sec-presentation discusses how to present your results. And, subsequently, @sec-sourcesbias deals with the question about the validity of your results. When do you know that you really obtained estimated an **unbiased** parameter. The final section concludes.
 
 ## Specification of your model {#sec-specificationmodel}
@@ -17,7 +61,7 @@ To do this we need to think about what variables to include and what regressions
 In practice, and especially economics, most follow the following general approach to variable selection and model specification:
 
 1.  First you specify a base or benchmark model. In this case that is the univariate regression of test scores on class size.
-2.  Then you specify a range of plausible alternative models, which include additional candidate variables.
+2.  Then you specify a range of plausible alternative models, which include additional candidate variables, usually based upon a theoretical or scientific framework.[Usually you choose candidate variables from what is already **known** in the literature.]{.aside}
 3.  Then you assess whether a candidate variable changes the coefficient of interest ($\hat{\beta}_1$)? You keep focusing on the effect of class size!
 4.  You assess whether a candidate variable is statistically significantly different from zero; so whether it has an impact of not.
     -   Use judgment, not a mechanical recipe, meaning that variable statistically insignificant different from zero should not automatically be thrown out.
@@ -58,10 +102,25 @@ So, we have a number of regressions (also called specifications) and we want to 
 -   Some relevant $F$-statistics, if any. Usually they are not included.
 -   Any other pertinent information but typically there is none.
 
-You can find most of this information in the final estimation Table \@ref(fig:catable) as presented in @stock2003introduction.
+You can find most of this information in the final estimation @tbl-catable as presented in @stock2003introduction. Here, we make use of the `summary_col` function from `statsmodels`. Although, not as smooth as likewise packages in other languages, this does the trick and finally we got rid of that ugly regression output that `Python` produces. 
 
-```{r fig.align='center', echo=FALSE, fig.cap = "Various specifications of test score models", label='fig-catable', out.width="800px"}
-knitr::include_graphics("./figures/catable.png")
+```{python}
+#| warning: FALSE
+#| message: FALSE
+#| label: tbl-catable
+#| echo: True
+model_1 = smf.ols('testscr ~ STR', data = data).fit(cov_type = "HC0")
+model_2 = smf.ols('testscr ~ STR + english', data = data).fit(cov_type = "HC0")
+model_3 = smf.ols('testscr ~ STR + english + lunch', data = data).fit(cov_type = "HC0")
+model_4 = smf.ols('testscr ~ STR + english + calworks', data = data).fit(cov_type = "HC0")
+model_5 = smf.ols('testscr ~ STR + english + lunch + calworks', data = data).fit(cov_type = "HC0")
+table = summary_col([model_1, model_2, model_3, model_4, model_5], 
+      stars=True, 
+      float_format='%0.2f',
+      model_names=['Model 1', 'Model 2', 'Model 3', 'Model 4', 'Model 5'],
+      regressor_order=['STR', 'english', 'lunch', 'calworks', 'const'])
+table.add_title('Regression of testscores on 4 different variables (N = 420)')
+print(table)
 ```
 
 So, here the variable of interest (student-teacher ratio) is the first variable on top. And the table keeps focusing on that one. Moreover, specification (3) and (5) seems to be preferred as they have the highest $\bar{R^2}$, although that is perhaps of lesser importance. What we can infer from this is that the estimate for student-teacher ratio remains robust around $-1$ and is significantly different from $0$. Does this now mean that this effect is **unbiased**? Most likely not, but that is something that the next section will discuss.
@@ -120,16 +179,28 @@ The third threat is measurement error or sometimes know as Errors-in-variables b
 
 #### Sample selection bias
 
-So far we have assumed simple random sampling of the population. In some cases, simple random sampling is thwarted because the sample, in effect, **selects itself**. Now, then sample selection bias arises when a selection process both influences the availability of data and if that process is related to the dependent variable. To illustrate this, I will adopt a hypothetical example given by @mcelreath2020statistical. Here we want to look at the relation between trustworthy science and newsworthy science. This example is motivated by the fact that newsworthy science (clickbait in the social media) oftentimes turns out not to be true. To given a reason why this might, we first simulate an artificial database of 400 observations of both newsworthy and trustworthy. Both variable are constructed such that they are $i.i.d.$ and standard normally distributed. So, there is no relation whatsoever and, indeed, Figure \@ref(fig:Rplot) shows a rather random cloud plot.
+So far we have assumed simple random sampling of the population. In some cases, simple random sampling is thwarted because the sample, in effect, **selects itself**. Now, then sample selection bias arises when a selection process both influences the availability of data and if that process is related to the dependent variable. To illustrate this, I will adopt a hypothetical example given by @mcelreath2020statistical. Here we want to look at the relation between trustworthy science and newsworthy science. This example is motivated by the fact that newsworthy science (clickbait in the social media) oftentimes turns out not to be true. To given a reason why this might, we first simulate an artificial database of 400 observations of both newsworthy and trustworthy. Both variable are constructed such that they are $i.i.d.$ and standard normally distributed. So, there is no relation whatsoever and, indeed, @fig-rplot shows a rather random cloud plot.
 
-```{r fig.align='center', echo=FALSE, fig.cap = "Random observations of newsworthy and trustworthy", label='Rplot', out.width="600px"}
-knitr::include_graphics("./figures/Rplot.png")
+```{r}
+#| warning: FALSE
+#| message: FALSE
+#| label: fig-rplot
+#| fig-align: 'center'
+#| fig-cap: "Random relation between thrustworthiness and newsworthiness" 
+#| echo: False
+knitr::include_graphics("./figures/Rplot.png", dpi = 90)
 ```
 
-But what if editors on social media have a decision rule: scientific output should be either thrustworthy or newsworthy, and preferably both. So, as a rule of thumb the select only the top 10% scientific outcomes , so the ones that score in the top 10% when both scores are added up ($\text{trustworthy} + \text{newsworthy}$). If we now depict the selected ones in grey in Figure \@ref(fig:Rplot01), then clearly suddenly a negative relation emerges between newsworthiness and thrustworthiness. And that negative relation is caused by the selection (external) editors make. So, if there is a selection somewhere in the process, estimates of what you want to estimates can quickly become biased.
+But what if editors on social media have a decision rule: scientific output should be either thrustworthy or newsworthy, and preferably both. So, as a rule of thumb the select only the top 10% scientific outcomes , so the ones that score in the top 10% when both scores are added up ($\text{trustworthy} + \text{newsworthy}$). If we now depict the selected ones in grey in @fig-rplot1, then clearly suddenly a negative relation emerges between newsworthiness and thrustworthiness. And that negative relation is caused by the selection (external) editors make. So, if there is a selection somewhere in the process, estimates of what you want to estimates can quickly become biased.
 
-```{r fig.align='center', echo=FALSE, fig.cap = "Negative relation amongst the selected points", label='Rplot01', out.width="600px"}
-knitr::include_graphics("./figures/Rplot01.png")
+```{r}
+#| warning: FALSE
+#| message: FALSE
+#| label: fig-rplot1
+#| fig-align: 'center'
+#| fig-cap: "Negative relation between thrustworthiness and newsworthiness" 
+#| echo: False
+knitr::include_graphics("./figures/Rplot01.png", dpi = 90)
 ```
 
 This process occurs more often than you might think. Consider the two following examples:
@@ -154,3 +225,5 @@ There are some potential solutions to simultaneous causality bias
 The first and always the best one is to conduct a randomized controlled experiment. Because,if $X_i$ is chosen at random by the experimenter, there is no feedback from the outcome variable to $Y_i$ (assuming perfect compliance). Secondly, you can develop and estimate a complete model of both directions of causality. This is the idea behind many large macro models (e.g. those of the Federal Reserve Bank in the US). This is difficult in practice. Finally, you can use instrumental variables regression again to estimate the causal effect of interest (effect of $X$ on $Y$, ignoring effect of $Y$ on $X$). But that is not for this course.
 
 ## Concluding remarks {#sec:conclusionspec}
+
+This chapter dealt with three things. First, the specification or a model. Here, I (and most colleagues) argue that what you need first is a theoretical or scientific framework. At least think carefully before you include additional variables. Second, you want to convey your results as clear, lucid and as concise as possible. For this you do not need all that Python regression output. Usually, in the social sciences statistical information is presented in tables such as in @tbl-catable and this Chapter offers one way to do this automatically. A benefit in doing that your work not only becomes more reproducible but as well error-prone. Finally, we ended with a whole list of threats to internal validity. This might seem daunting, but it is unfortunately a matter of life: doing science is hard. Luckily, we slowly progress and gain more insight.

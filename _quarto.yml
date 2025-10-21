@@ -16,6 +16,7 @@ book:
     - references.qmd
   appendices:
      - appendix.qmd
+  downloads: pdf
 
 bibliography: references.bib
 
@@ -33,7 +34,6 @@ format:
           </script>
     theme: cosmo
     toc-depth: 4
-
   pdf:
     documentclass: scrreprt
 

@@ -630,7 +630,7 @@ model_2 = smf.ols('testscr ~ large', data=data).fit(cov_type = "HC0")
 print(model_2.summary())
 ```
 
-where the standard error of `large` is now $1.821}$.
+where the standard error of `large` is now $1.821$.
 
 The bottom line is that the errors are either homoskedastic or heteroskedastic and if you use heteroskedastic-robust standard errors, you are fine. Namely:
 

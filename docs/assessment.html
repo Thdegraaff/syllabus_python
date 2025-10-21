@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -153,6 +187,9 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Social-economic analysis with <code>Python</code></a> 
+        <div class="sidebar-tools-main">
+    <a href="./Social-economic-analysis-with-`Python`.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -271,8 +308,23 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Python packages we need for this chapter</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># for making nice plots in combination with matplotlib</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># for regression related stuff</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># the next package allows us to formula's for ols</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># to create "nicer" output tables</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.iolib.summary2 <span class="im">import</span> summary_col</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="page-columns page-full"><p>This concluding chapter deals with an epistemological question , namely how to convey your key results, and an ontological question , how do you know whether what you convey is true (e.g., unbiased). To do so, we first look at specification issues in <a href="#sec-specificationmodel" class="quarto-xref"><span>Section 4.1</span></a>. Which variables should you include? Thereafter, <a href="#sec-presentation" class="quarto-xref"><span>Section 4.2</span></a> discusses how to present your results. And, subsequently, <a href="#sec-sourcesbias" class="quarto-xref"><span>Section 4.3</span></a> deals with the question about the validity of your results. When do you know that you really obtained estimated an <strong>unbiased</strong> parameter. The final section concludes.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Epistemology says something about what knowledge is and how we communicate that knowledge.</span><span class="margin-aside">Ontology is more about the nature of being and our own ‘beliefs’ in that.</span></div></div>
-<section id="sec-specificationmodel" class="level2" data-number="4.1">
+<section id="sec-specificationmodel" class="level2 page-columns page-full" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-specificationmodel"><span class="header-section-number">4.1</span> Specification of your model</h2>
 <p>A long-standing but simple question is how to decide which variables to include in a regression model. Unfortunately, the answer to this question is rather complex. A straightforward but naive approach would be to include them all! So, throw every variable in that is in your database. This, however, leads to “causal salad” <span class="citation" data-cites="mcelreath2020statistical">(a term coined by <a href="references.html#ref-mcelreath2020statistical" role="doc-biblioref">McElreath 2020</a>)</span> as displayed in Figure <a href="#fig-causalsalad" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> and can actually lead to a biased estimator. One reason for this is that if you include a variable that is related to the error term then all other parameters are biased as well.</p>
 <div class="cell" data-layout-align="center">
@@ -294,7 +346,7 @@ Figure&nbsp;4.1: Causal salad
 <p>In practice, and especially economics, most follow the following general approach to variable selection and model specification:</p>
 <ol type="1">
 <li>First you specify a base or benchmark model. In this case that is the univariate regression of test scores on class size.</li>
-<li>Then you specify a range of plausible alternative models, which include additional candidate variables.</li>
+<li>Then you specify a range of plausible alternative models, which include additional candidate variables, usually based upon a theoretical or scientific framework.</li>
 <li>Then you assess whether a candidate variable changes the coefficient of interest (<span class="math inline">\(\hat{\beta}_1\)</span>)? You keep focusing on the effect of class size!</li>
 <li>You assess whether a candidate variable is statistically significantly different from zero; so whether it has an impact of not.
 <ul>
@@ -302,7 +354,7 @@ Figure&nbsp;4.1: Causal salad
 <li>In all cases, do not just try to maximize <span class="math inline">\(\bar{R^2}\)</span>. You focus on identifying a causal effect, not on prediction.</li>
 </ul></li>
 </ol>
-<p>Considering the last point, it is easy to fall into the trap of maximizing the <span class="math inline">\(\bar{R^2}\)</span>—but this loses sight of our real objective, an unbiased estimator of the class size effect. Recall that a high <span class="math inline">\(\bar{R^2}\)</span> means that the regressors explain the variation in <span class="math inline">\(Y\)</span>. It does <strong>not</strong> mean</p>
+<div class="no-row-height column-margin column-container"><span class="margin-aside">Usually you choose candidate variables from what is already <strong>known</strong> in the literature.</span></div><p>Considering the last point, it is easy to fall into the trap of maximizing the <span class="math inline">\(\bar{R^2}\)</span>—but this loses sight of our real objective, an unbiased estimator of the class size effect. Recall that a high <span class="math inline">\(\bar{R^2}\)</span> means that the regressors explain the variation in <span class="math inline">\(Y\)</span>. It does <strong>not</strong> mean</p>
 <ul>
 <li>that you have eliminated omitted variable bias;</li>
 <li>that you have an unbiased estimator of a causal effect <span class="math inline">\((\beta_1)\)</span>;</li>
@@ -346,20 +398,48 @@ Figure&nbsp;4.2: Test scores versus various independent variables
 <li>Some relevant <span class="math inline">\(F\)</span>-statistics, if any. Usually they are not included.</li>
 <li>Any other pertinent information but typically there is none.</li>
 </ul>
-<p>You can find most of this information in the final estimation Table @ref(fig:catable) as presented in <span class="citation" data-cites="stock2003introduction">Stock, Watson, et al. (<a href="references.html#ref-stock2003introduction" role="doc-biblioref">2003</a>)</span>.</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div id="fig-catable" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-catable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./figures/catable.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="800">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-catable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.3: Various specifications of test score models
+<p>You can find most of this information in the final estimation <a href="#tbl-catable" class="quarto-xref">Table&nbsp;<span>4.1</span></a> as presented in <span class="citation" data-cites="stock2003introduction">Stock, Watson, et al. (<a href="references.html#ref-stock2003introduction" role="doc-biblioref">2003</a>)</span>. Here, we make use of the <code>summary_col</code> function from <code>statsmodels</code>. Although, not as smooth as likewise packages in other languages, this does the trick and finally we got rid of that ugly regression output that <code>Python</code> produces.</p>
+<div id="tbl-catable" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-catable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.1
 </figcaption>
+<div aria-describedby="tbl-catable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model_1 <span class="op">=</span> smf.ols(<span class="st">'testscr ~ STR'</span>, data <span class="op">=</span> data).fit(cov_type <span class="op">=</span> <span class="st">"HC0"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model_2 <span class="op">=</span> smf.ols(<span class="st">'testscr ~ STR + english'</span>, data <span class="op">=</span> data).fit(cov_type <span class="op">=</span> <span class="st">"HC0"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model_3 <span class="op">=</span> smf.ols(<span class="st">'testscr ~ STR + english + lunch'</span>, data <span class="op">=</span> data).fit(cov_type <span class="op">=</span> <span class="st">"HC0"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model_4 <span class="op">=</span> smf.ols(<span class="st">'testscr ~ STR + english + calworks'</span>, data <span class="op">=</span> data).fit(cov_type <span class="op">=</span> <span class="st">"HC0"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>model_5 <span class="op">=</span> smf.ols(<span class="st">'testscr ~ STR + english + lunch + calworks'</span>, data <span class="op">=</span> data).fit(cov_type <span class="op">=</span> <span class="st">"HC0"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> summary_col([model_1, model_2, model_3, model_4, model_5], </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      stars<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      float_format<span class="op">=</span><span class="st">'</span><span class="sc">%0.2f</span><span class="st">'</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      model_names<span class="op">=</span>[<span class="st">'Model 1'</span>, <span class="st">'Model 2'</span>, <span class="st">'Model 3'</span>, <span class="st">'Model 4'</span>, <span class="st">'Model 5'</span>],</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      regressor_order<span class="op">=</span>[<span class="st">'STR'</span>, <span class="st">'english'</span>, <span class="st">'lunch'</span>, <span class="st">'calworks'</span>, <span class="st">'const'</span>])</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>table.add_title(<span class="st">'Regression of testscores on 4 different variables (N = 420)'</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Regression of testscores on 4 different variables (N = 420)
+================================================================
+                Model 1   Model 2   Model 3   Model 4   Model 5 
+----------------------------------------------------------------
+STR            -2.28***  -1.10**   -1.00***  -1.31***  -1.01*** 
+               (0.52)    (0.43)    (0.27)    (0.34)    (0.27)   
+english                  -0.65***  -0.12***  -0.49***  -0.13*** 
+                         (0.03)    (0.03)    (0.03)    (0.04)   
+lunch                              -0.55***            -0.53*** 
+                                   (0.02)              (0.04)   
+calworks                                     -0.79***  -0.05    
+                                             (0.07)    (0.06)   
+Intercept      698.93*** 686.03*** 700.15*** 698.00*** 700.39***
+               (10.34)   (8.70)    (5.54)    (6.89)    (5.50)   
+R-squared      0.05      0.43      0.77      0.63      0.77     
+R-squared Adj. 0.05      0.42      0.77      0.63      0.77     
+================================================================
+Standard errors in parentheses.
+* p&lt;.1, ** p&lt;.05, ***p&lt;.01</code></pre>
+</div>
+</div>
 </figure>
-</div>
-</div>
 </div>
 <p>So, here the variable of interest (student-teacher ratio) is the first variable on top. And the table keeps focusing on that one. Moreover, specification (3) and (5) seems to be preferred as they have the highest <span class="math inline">\(\bar{R^2}\)</span>, although that is perhaps of lesser importance. What we can infer from this is that the estimate for student-teacher ratio remains robust around <span class="math inline">\(-1\)</span> and is significantly different from <span class="math inline">\(0\)</span>. Does this now mean that this effect is <strong>unbiased</strong>? Most likely not, but that is something that the next section will discuss.</p>
 </section>
@@ -417,24 +497,32 @@ Figure&nbsp;4.3: Various specifications of test score models
 </section>
 <section id="sample-selection-bias" class="level4" data-number="4.3.2.4">
 <h4 data-number="4.3.2.4" class="anchored" data-anchor-id="sample-selection-bias"><span class="header-section-number">4.3.2.4</span> Sample selection bias</h4>
-<p>So far we have assumed simple random sampling of the population. In some cases, simple random sampling is thwarted because the sample, in effect, <strong>selects itself</strong>. Now, then sample selection bias arises when a selection process both influences the availability of data and if that process is related to the dependent variable. To illustrate this, I will adopt a hypothetical example given by <span class="citation" data-cites="mcelreath2020statistical">McElreath (<a href="references.html#ref-mcelreath2020statistical" role="doc-biblioref">2020</a>)</span>. Here we want to look at the relation between trustworthy science and newsworthy science. This example is motivated by the fact that newsworthy science (clickbait in the social media) oftentimes turns out not to be true. To given a reason why this might, we first simulate an artificial database of 400 observations of both newsworthy and trustworthy. Both variable are constructed such that they are <span class="math inline">\(i.i.d.\)</span> and standard normally distributed. So, there is no relation whatsoever and, indeed, Figure @ref(fig:Rplot) shows a rather random cloud plot.</p>
+<p>So far we have assumed simple random sampling of the population. In some cases, simple random sampling is thwarted because the sample, in effect, <strong>selects itself</strong>. Now, then sample selection bias arises when a selection process both influences the availability of data and if that process is related to the dependent variable. To illustrate this, I will adopt a hypothetical example given by <span class="citation" data-cites="mcelreath2020statistical">McElreath (<a href="references.html#ref-mcelreath2020statistical" role="doc-biblioref">2020</a>)</span>. Here we want to look at the relation between trustworthy science and newsworthy science. This example is motivated by the fact that newsworthy science (clickbait in the social media) oftentimes turns out not to be true. To given a reason why this might, we first simulate an artificial database of 400 observations of both newsworthy and trustworthy. Both variable are constructed such that they are <span class="math inline">\(i.i.d.\)</span> and standard normally distributed. So, there is no relation whatsoever and, indeed, <a href="#fig-rplot" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> shows a rather random cloud plot.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="./figures/Rplot.png" class="img-fluid figure-img" width="600"></p>
-<figcaption>Random observations of newsworthy and trustworthy</figcaption>
+<div id="fig-rplot" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./figures/Rplot.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.3: Random relation between thrustworthiness and newsworthiness
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>But what if editors on social media have a decision rule: scientific output should be either thrustworthy or newsworthy, and preferably both. So, as a rule of thumb the select only the top 10% scientific outcomes , so the ones that score in the top 10% when both scores are added up (<span class="math inline">\(\text{trustworthy} + \text{newsworthy}\)</span>). If we now depict the selected ones in grey in Figure @ref(fig:Rplot01), then clearly suddenly a negative relation emerges between newsworthiness and thrustworthiness. And that negative relation is caused by the selection (external) editors make. So, if there is a selection somewhere in the process, estimates of what you want to estimates can quickly become biased.</p>
+<p>But what if editors on social media have a decision rule: scientific output should be either thrustworthy or newsworthy, and preferably both. So, as a rule of thumb the select only the top 10% scientific outcomes , so the ones that score in the top 10% when both scores are added up (<span class="math inline">\(\text{trustworthy} + \text{newsworthy}\)</span>). If we now depict the selected ones in grey in <a href="#fig-rplot1" class="quarto-xref">Figure&nbsp;<span>4.4</span></a>, then clearly suddenly a negative relation emerges between newsworthiness and thrustworthiness. And that negative relation is caused by the selection (external) editors make. So, if there is a selection somewhere in the process, estimates of what you want to estimates can quickly become biased.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="./figures/Rplot01.png" class="img-fluid figure-img" width="600"></p>
-<figcaption>Negative relation amongst the selected points</figcaption>
+<div id="fig-rplot1" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rplot1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./figures/Rplot01.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rplot1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.4: Negative relation between thrustworthiness and newsworthiness
+</figcaption>
 </figure>
 </div>
 </div>
@@ -461,6 +549,7 @@ Figure&nbsp;4.3: Various specifications of test score models
 </section>
 <section id="sec:conclusionspec" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="sec:conclusionspec"><span class="header-section-number">4.4</span> Concluding remarks</h2>
+<p>This chapter dealt with three things. First, the specification or a model. Here, I (and most colleagues) argue that what you need first is a theoretical or scientific framework. At least think carefully before you include additional variables. Second, you want to convey your results as clear, lucid and as concise as possible. For this you do not need all that Python regression output. Usually, in the social sciences statistical information is presented in tables such as in <a href="#tbl-catable" class="quarto-xref">Table&nbsp;<span>4.1</span></a> and this Chapter offers one way to do this automatically. A benefit in doing that your work not only becomes more reproducible but as well error-prone. Finally, we ended with a whole list of threats to internal validity. This might seem daunting, but it is unfortunately a matter of life: doing science is hard. Luckily, we slowly progress and gain more insight.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
